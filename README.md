@@ -22,4 +22,36 @@ Prerequisites: JDK 25, update Intellij to the most recent version.
    |____/ \__,_|_|\_\___|
    ```
 
-**Warning:** Keep the `src\main\java` folder as the root folder for Java files (i.e., don't rename those folders or move Java files to another folder outside of this folder path), as this is the default location some tools (e.g., Gradle) expect to find Java files.
+## Building with Maven
+
+This project uses Maven and requires JDK 25. The required Java and Maven versions are declared in `mise.toml`.
+
+After installing [mise](https://mise.jdx.dev/), activate it in your shell and install the project tools:
+
+```shell
+mise install
+```
+
+Check that Maven is using Java 25:
+
+```shell
+mvn --version
+```
+
+Then build the project:
+
+```shell
+mvn clean package
+```
+
+The compiled classes and packaged JAR will be written to the `target` directory.
+
+Compile and run the application with:
+
+```shell
+mvn compile exec:java
+```
+
+If your current shell has not refreshed its `PATH`, either open a new terminal or run commands explicitly through mise, for example `mise exec -- java -version`.
+
+**Warning:** Keep the `src/main/java` folder as the root folder for Java files (i.e., don't rename those folders or move Java files outside of this folder path), as this is Maven's default source directory.
