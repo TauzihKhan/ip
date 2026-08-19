@@ -4,7 +4,7 @@ import java.util.Scanner;
  * Runs PotatoBot's text-based interaction with the user.
  */
 public class PotatoBot {
-  private static final Task itemList = new Task();
+  private static final TaskList itemList = new TaskList();
   private static final String SEPARATOR = "=".repeat(80);
   private static final String EXIT_COMMAND = "bye";
   private static final String BANNER = """
@@ -45,7 +45,7 @@ public class PotatoBot {
     System.out.println(SEPARATOR);
     System.out.print(BANNER);
     System.out.println("Hello! I'm PotatoBot, your trusty spud assistant.");
-    System.out.println("What can I dig up for you? (Say \"bye\" if you want me to leave you alone)");
+    System.out.println("What tasks do you want me to store for you? (Say \"bye\" if you want me to leave you alone)");
     System.out.println(SEPARATOR + "\n");
   }
 
@@ -62,7 +62,7 @@ public class PotatoBot {
     System.out.println("PotatoBot:\n  " + indentedMessage + "\n");
   }
 
-  private static void addToList(String addition) {
+  private static void addToList(Task addition) {
     if (!itemList.add(addition)) {
       printMessageBox(errorMessage(ErrorStatus.ListFull));
       return;
@@ -115,8 +115,27 @@ public class PotatoBot {
       unmarkItem(itemNumber);
       return;
     }
+
+    else if (input.split(" ")[0].equals("todo")) {
+      String description = input.substring("todo ".length());
+      addToList(new Todo(description));
+      return;
+    }
+
+    else if (input.split(" ")[0].equals("deadline")) {
+      String[] deadlineDetails = input.substring("deadline ".length()).split(" /by ", 2);
+      addToList(new Deadline(deadlineDetails[0], deadlineDetails[1]));
+      return;
+    }
+
+    else if (input.split(" ")[0].equals("event")) {
+      String[] eventDetails = input.substring("event ".length()).split(" /from ", 2);
+      String[] eventTimes = eventDetails[1].split(" /to ", 2);
+      addToList(new Event(eventDetails[0], eventTimes[0], eventTimes[1]));
+      return;
+    }
     // Add to list by default
-    addToList(input);
+    addToList(new Task(input));
   }
 
   // Error message
