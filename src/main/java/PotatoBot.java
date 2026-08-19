@@ -98,43 +98,61 @@ public class PotatoBot {
     printMessageBox("Task Reset: " + itemList.get(index - 1) + "\nKeep going!");
   }
 
+  private static int parseItemNumber(String input) throws PotatoBotException {
+    try {
+      return Integer.parseInt(input);
+    } catch (NumberFormatException exception) {
+      throw new PotatoBotException("Do you hear yourself?? Task number must be a whole number.");
+    }
+  }
+
   private static void handleInput(String input) throws PotatoBotException {
+    String[] inputSplit = input.split(" ", 2);
+
     if (input.equals("list")) {
       printMessageBox(itemList.printList());
       return;
     }
 
-    else if (input.split(" ")[0].equals("mark")) {
-      int itemNumber = Integer.parseInt(input.split(" ")[1]);
+    if (inputSplit.length < 2) {
+      throw new PotatoBotException("Me no gets?");
+    }
+
+    else if (inputSplit[0].equals("mark")) {
+      int itemNumber = parseItemNumber(inputSplit[1]);
       markItem(itemNumber);
       return;
     }
 
-    else if (input.split(" ")[0].equals("unmark")) {
-      int itemNumber = Integer.parseInt(input.split(" ")[1]);
+    else if (inputSplit[0].equals("unmark")) {
+      int itemNumber = parseItemNumber(inputSplit[1]);
       unmarkItem(itemNumber);
       return;
     }
 
-    else if (input.split(" ")[0].equals("todo")) {
-      String description = input.substring("todo ".length());
-      addToList(new Todo(description));
+    else if (inputSplit[0].equals("todo")) {
+      addToList(new Todo(inputSplit[1]));
       return;
     }
 
-    else if (input.split(" ")[0].equals("deadline")) {
-      String[] deadlineDetails = input.substring("deadline ".length()).split(" /by ", 2);
+    else if (inputSplit[0].equals("deadline")) {
+      String[] deadlineDetails = inputSplit[1].split(" /by ", 2);
       addToList(new Deadline(deadlineDetails[0], deadlineDetails[1]));
       return;
     }
 
-    else if (input.split(" ")[0].equals("event")) {
-      String[] eventDetails = input.substring("event ".length()).split(" /from ", 2);
+    else if (inputSplit[0].equals("event")) {
+      String[] eventDetails = inputSplit[1].split(" /from ", 2);
       String[] eventTimes = eventDetails[1].split(" /to ", 2);
       addToList(new Event(eventDetails[0], eventTimes[0], eventTimes[1]));
       return;
     }
-    // Add to list by default
-    addToList(new Task(input));
+
+    else if (inputSplit[0].equals("add")) {
+      addToList(new Task(inputSplit[1]));
+      return;
+    }
+
+    throw new PotatoBotException("Me no gets?");
   }
 }
