@@ -1,13 +1,10 @@
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Scanner;
 
 /**
  * Runs PotatoBot's text-based interaction with the user.
  */
 public class PotatoBot {
-  private static final List<String> itemList = new ArrayList<>();
-
+  private static final Task itemList = new Task();
   private static final String SEPARATOR = "=".repeat(80);
   private static final String EXIT_COMMAND = "bye";
   private static final String BANNER = """
@@ -21,27 +18,23 @@ public class PotatoBot {
 
   public static void main(String[] args) {
     Scanner scanner = new Scanner(System.in);
-
     printGreeting();
+
     while (true) {
       System.out.print("Me: ");
       if (!scanner.hasNextLine()) {
         break;
       }
-
       String input = scanner.nextLine();
+
+      // Special Exit command
       if (EXIT_COMMAND.equals(input)) {
         System.out.println();
         break;
       }
 
-      if (input.equals("list")) {
-        printList();
-        continue;
-      }
-
-      addToList(input);
-      System.out.println("PotatoBot: \n  Added: " + input + "\n");
+      // For non breaking tasks
+      handleInput(input);
     }
     printFarewell();
     scanner.close();
@@ -63,22 +56,80 @@ public class PotatoBot {
     System.out.println(SEPARATOR);
   }
 
-  private static void addToList(String addition) {
-    itemList.add(addition);
+  // Prints a message inside PotatoBot's standard reply box.
+  private static void printMessageBox(String message) {
+    String indentedMessage = message.replace("\n", "\n  ");
+    System.out.println("PotatoBot:\n  " + indentedMessage + "\n");
   }
 
-  // Print sack of items
-  private static void printList() {
-    System.out.println("PotatoBot:");
-    if (itemList.isEmpty()) {
-      System.out.println("  Your potato sack is empty.\n");
+  private static void addToList(String addition) {
+    if (!itemList.add(addition)) {
+      printMessageBox(errorMessage(ErrorStatus.ListFull));
+      return;
+    }
+    printMessageBox("Added: " + addition);
+  }
+
+  private static void markItem(int index) {
+    if (index == 0) {
+      printMessageBox(errorMessage(ErrorStatus.InvalidInput));
       return;
     }
 
-    System.out.println("  Here are the items in your potato sack:");
-    for (int i = 0; i < itemList.size(); i++) {
-      System.out.println("    " + (i + 1) + ". " + itemList.get(i));
+    if (index > itemList.size()) {
+      printMessageBox(errorMessage(ErrorStatus.ListIndexOutOfBounds));
+      return;
     }
-    System.out.println();
+    itemList.markDone(index - 1);
+    printMessageBox("Task completed: " + itemList.get(index - 1) + "\nKeep going!");
+  }
+
+  private static void unmarkItem(int index) {
+    if (index == 0) {
+      printMessageBox(errorMessage(ErrorStatus.InvalidInput));
+    }
+
+    if (index > itemList.size()) {
+      printMessageBox(errorMessage(ErrorStatus.ListIndexOutOfBounds));
+      return;
+    }
+
+    itemList.markReset(index - 1);
+    printMessageBox("Task Reset: " + itemList.get(index - 1) + "\nKeep going!");
+  }
+
+  private static void handleInput(String input) {
+    if (input.equals("list")) {
+      printMessageBox(itemList.printList());
+      return;
+    }
+
+    else if (input.split(" ")[0].equals("mark")) {
+      int itemNumber = Integer.parseInt(input.split(" ")[1]);
+      markItem(itemNumber);
+      return;
+    }
+
+    else if (input.split(" ")[0].equals("unmark")) {
+      int itemNumber = Integer.parseInt(input.split(" ")[1]);
+      unmarkItem(itemNumber);
+      return;
+    }
+    // Add to list by default
+    addToList(input);
+  }
+
+  // Error message
+  private static String errorMessage(ErrorStatus status) {
+    switch (status) {
+      case ListIndexOutOfBounds:
+        return "Think again... We only got " + itemList.size() + " items in the list...";
+      case InvalidInput:
+        return "Do you hear yourself??";
+      case ListFull:
+        return "Your potato sack is full! It can only hold 100 items.";
+      default:
+        return "Try again";
+    }
   }
 }
