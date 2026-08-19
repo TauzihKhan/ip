@@ -34,7 +34,11 @@ public class PotatoBot {
       }
 
       // For non breaking tasks
-      handleInput(input);
+      try {
+        handleInput(input);
+      } catch (PotatoBotException exception) {
+        printMessageBox(exception.getMessage());
+      }
     }
     printFarewell();
     scanner.close();
@@ -62,43 +66,39 @@ public class PotatoBot {
     System.out.println("PotatoBot:\n  " + indentedMessage + "\n");
   }
 
-  private static void addToList(Task addition) {
-    if (!itemList.add(addition)) {
-      printMessageBox(errorMessage(ErrorStatus.ListFull));
-      return;
-    }
+  private static void addToList(Task addition) throws PotatoBotException {
+    itemList.add(addition);
     printMessageBox("Added: " + addition);
   }
 
-  private static void markItem(int index) {
-    if (index == 0) {
-      printMessageBox(errorMessage(ErrorStatus.InvalidInput));
-      return;
+  private static void markItem(int index) throws PotatoBotException {
+    if (index <= 0) {
+      throw new PotatoBotException("Do you hear yourself??");
     }
 
     if (index > itemList.size()) {
-      printMessageBox(errorMessage(ErrorStatus.ListIndexOutOfBounds));
-      return;
+      throw new PotatoBotException(
+          "Think again... We only got " + itemList.size() + " items in the list...");
     }
     itemList.markDone(index - 1);
     printMessageBox("Task completed: " + itemList.get(index - 1) + "\nKeep going!");
   }
 
-  private static void unmarkItem(int index) {
-    if (index == 0) {
-      printMessageBox(errorMessage(ErrorStatus.InvalidInput));
+  private static void unmarkItem(int index) throws PotatoBotException {
+    if (index <= 0) {
+      throw new PotatoBotException("Do you hear yourself??");
     }
 
     if (index > itemList.size()) {
-      printMessageBox(errorMessage(ErrorStatus.ListIndexOutOfBounds));
-      return;
+      throw new PotatoBotException(
+          "Think again... We only got " + itemList.size() + " items in the list...");
     }
 
     itemList.markReset(index - 1);
     printMessageBox("Task Reset: " + itemList.get(index - 1) + "\nKeep going!");
   }
 
-  private static void handleInput(String input) {
+  private static void handleInput(String input) throws PotatoBotException {
     if (input.equals("list")) {
       printMessageBox(itemList.printList());
       return;
@@ -136,19 +136,5 @@ public class PotatoBot {
     }
     // Add to list by default
     addToList(new Task(input));
-  }
-
-  // Error message
-  private static String errorMessage(ErrorStatus status) {
-    switch (status) {
-      case ListIndexOutOfBounds:
-        return "Think again... We only got " + itemList.size() + " items in the list...";
-      case InvalidInput:
-        return "Do you hear yourself??";
-      case ListFull:
-        return "Your potato sack is full! It can only hold 100 items.";
-      default:
-        return "Try again";
-    }
   }
 }

@@ -20,15 +20,18 @@ public class TaskList {
     return size;
   }
 
-  // Add item
-  public boolean add(Task item) {
+  /**
+   * Adds an item to the fixed-size task array.
+   *
+   * @throws PotatoBotException if the task array is already full
+   */
+  public void add(Task item) throws PotatoBotException {
     if (size >= MAX_SIZE) {
-      return false;
+      throw new PotatoBotException("Your potato sack is full! It can only hold 100 items.");
     }
 
     itemList[size] = item;
     size++;
-    return true;
   }
 
   public boolean isEmpty() {
