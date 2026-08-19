@@ -122,9 +122,9 @@ public class PotatoBot {
 
   private static void handleInput(String input) throws PotatoBotException {
     String[] inputSplit = input.split(" ", 2);
-    String command = inputSplit[0];
+    CommandType command = CommandType.parse(inputSplit[0]);
 
-    if (input.equals("list")) {
+    if (command == CommandType.LIST && inputSplit.length == 1) {
       printMessageBox(itemList.printList());
       return;
     }
@@ -133,43 +133,43 @@ public class PotatoBot {
       throw new PotatoBotException("Me no gets?");
     }
 
-    else if (command.equals("mark")) {
+    else if (command == CommandType.MARK) {
       int itemNumber = parseItemNumber(inputSplit[1]);
       markItem(itemNumber);
       return;
     }
 
-    else if (command.equals("unmark")) {
+    else if (command == CommandType.UNMARK) {
       int itemNumber = parseItemNumber(inputSplit[1]);
       unmarkItem(itemNumber);
       return;
     }
 
-    else if (command.equals("delete")) {
+    else if (command == CommandType.DELETE) {
       int itemNumber = parseItemNumber(inputSplit[1]);
       deleteItem(itemNumber);
       return;
     }
 
-    else if (command.equals("todo")) {
+    else if (command == CommandType.TODO) {
       addToList(new Todo(inputSplit[1]));
       return;
     }
 
-    else if (command.equals("deadline")) {
+    else if (command == CommandType.DEADLINE) {
       String[] deadlineDetails = inputSplit[1].split(" /by ", 2);
       addToList(new Deadline(deadlineDetails[0], deadlineDetails[1]));
       return;
     }
 
-    else if (command.equals("event")) {
+    else if (command == CommandType.EVENT) {
       String[] eventDetails = inputSplit[1].split(" /from ", 2);
       String[] eventTimes = eventDetails[1].split(" /to ", 2);
       addToList(new Event(eventDetails[0], eventTimes[0], eventTimes[1]));
       return;
     }
 
-    else if (command.equals("add")) {
+    else if (command == CommandType.ADD) {
       addToList(new Task(inputSplit[1]));
       return;
     }
