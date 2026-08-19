@@ -1,9 +1,7 @@
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Stores up to 100 tasks.
- */
+// Stores up to 100 tasks.
 public class TaskList {
   private static final int MAX_SIZE = 100;
 
@@ -44,6 +42,10 @@ public class TaskList {
 
   public void markReset(int index) {
     itemList.get(index).markReset();
+  }
+
+  public Task delete(int index) {
+    return itemList.remove(index);
   }
 
   public String printList() {

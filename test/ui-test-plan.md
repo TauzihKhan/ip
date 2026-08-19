@@ -52,6 +52,28 @@ The runner requires Java 25, builds before testing, compares each PotatoBot repl
           "expected_output": "PotatoBot:\n  Here are the tasks in your list:\n    1.[ ] buy potatoes"
         }
       ]
+    },
+    {
+      "id": "UI-003",
+      "aim": "Delete a task by number and remove it from the displayed list.",
+      "steps": [
+        {
+          "input": "add buy potatoes",
+          "expected_output": "PotatoBot:\n  Added: buy potatoes"
+        },
+        {
+          "input": "todo read book",
+          "expected_output": "PotatoBot:\n  Added: read book (Todo)"
+        },
+        {
+          "input": "delete 1",
+          "expected_output": "PotatoBot:\n  Task deleted: buy potatoes\n  Keep it going!"
+        },
+        {
+          "input": "list",
+          "expected_output": "PotatoBot:\n  Here are the tasks in your list:\n    1.[ ] read book (Todo)"
+        }
+      ]
     }
   ]
 }

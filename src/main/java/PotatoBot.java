@@ -98,6 +98,20 @@ public class PotatoBot {
     printMessageBox("Task Reset: " + itemList.get(index - 1) + "\nKeep going!");
   }
 
+  private static void deleteItem(int index) throws PotatoBotException {
+    if (index <= 0) {
+      throw new PotatoBotException("Do you hear yourself??");
+    }
+
+    if (index > itemList.size()) {
+      throw new PotatoBotException(
+          "Think again... We only got " + itemList.size() + " items in the list...");
+    }
+
+    Task deletedTask = itemList.delete(index - 1);
+    printMessageBox("Task deleted: " + deletedTask + "\nKeep it going!");
+  }
+
   private static int parseItemNumber(String input) throws PotatoBotException {
     try {
       return Integer.parseInt(input);
@@ -108,6 +122,7 @@ public class PotatoBot {
 
   private static void handleInput(String input) throws PotatoBotException {
     String[] inputSplit = input.split(" ", 2);
+    String command = inputSplit[0];
 
     if (input.equals("list")) {
       printMessageBox(itemList.printList());
@@ -118,37 +133,43 @@ public class PotatoBot {
       throw new PotatoBotException("Me no gets?");
     }
 
-    else if (inputSplit[0].equals("mark")) {
+    else if (command.equals("mark")) {
       int itemNumber = parseItemNumber(inputSplit[1]);
       markItem(itemNumber);
       return;
     }
 
-    else if (inputSplit[0].equals("unmark")) {
+    else if (command.equals("unmark")) {
       int itemNumber = parseItemNumber(inputSplit[1]);
       unmarkItem(itemNumber);
       return;
     }
 
-    else if (inputSplit[0].equals("todo")) {
+    else if (command.equals("delete")) {
+      int itemNumber = parseItemNumber(inputSplit[1]);
+      deleteItem(itemNumber);
+      return;
+    }
+
+    else if (command.equals("todo")) {
       addToList(new Todo(inputSplit[1]));
       return;
     }
 
-    else if (inputSplit[0].equals("deadline")) {
+    else if (command.equals("deadline")) {
       String[] deadlineDetails = inputSplit[1].split(" /by ", 2);
       addToList(new Deadline(deadlineDetails[0], deadlineDetails[1]));
       return;
     }
 
-    else if (inputSplit[0].equals("event")) {
+    else if (command.equals("event")) {
       String[] eventDetails = inputSplit[1].split(" /from ", 2);
       String[] eventTimes = eventDetails[1].split(" /to ", 2);
       addToList(new Event(eventDetails[0], eventTimes[0], eventTimes[1]));
       return;
     }
 
-    else if (inputSplit[0].equals("add")) {
+    else if (command.equals("add")) {
       addToList(new Task(inputSplit[1]));
       return;
     }
