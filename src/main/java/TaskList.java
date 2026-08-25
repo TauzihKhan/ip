@@ -3,7 +3,7 @@ import java.util.List;
 
 // Stores up to 100 tasks.
 public class TaskList {
-  private static final int MAX_SIZE = 100;
+  static final int MAX_SIZE = 100;
 
   private final List<Task> itemList;
 

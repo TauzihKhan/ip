@@ -37,3 +37,4 @@ Do not commit or push unless explicitly asked.
 ## Project-specific skills
 
 Use the `test-ui` skill at `skills/test-ui/SKILL.md` when adding or running PotatoBot console UI command-output tests.
+Use the `present-changes-visually` skill at `skills/present-changes-visually/SKILL.md` when generating an HTML page that presents Git changes visually.
