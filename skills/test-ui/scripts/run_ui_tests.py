@@ -2,9 +2,12 @@
 """Run PotatoBot console UI tests recorded in test/ui-test-plan.md."""
 
 import json
+import os
 import re
+import shutil
 import subprocess
 import sys
+import tempfile
 from pathlib import Path
 
 
@@ -26,11 +29,12 @@ def load_test_plan():
     return json.loads(match.group(1))
 
 
-def run_process(command, console_input=None):
+def run_process(command, console_input=None, environment=None):
     """Run a project command and capture its console streams."""
     return subprocess.run(
         command,
         cwd=PROJECT_ROOT,
+        env=environment,
         input=console_input,
         text=True,
         capture_output=True,
@@ -84,37 +88,50 @@ def main():
     print("Build passed.\n")
 
     run_command = plan["run_command"]
+    test_data_directory = Path(tempfile.mkdtemp(prefix="potatobot-ui-", dir=PROJECT_ROOT / "target"))
+    test_save_file = test_data_directory / "potatobot.txt"
+    test_environment = os.environ.copy()
+    test_environment["POTATOBOT_SAVE_FILE"] = str(test_save_file)
     passed_steps = 0
 
-    for test_case in plan["test_cases"]:
-        test_id = test_case["id"]
-        print(f"TEST {test_id}: {test_case['aim']}")
-        command_history = []
+    try:
+        for test_case in plan["test_cases"]:
+            test_id = test_case["id"]
+            print(f"TEST {test_id}: {test_case['aim']}")
+            command_history = []
 
-        for step_number, step in enumerate(test_case["steps"], start=1):
-            command_input = step["input"]
-            expected = normalize(step["expected_output"])
-            command_history.append(command_input)
-            session_input = "\n".join(command_history + ["bye"]) + "\n"
-            run_result = run_process(run_command, session_input)
+            for step_number, step in enumerate(test_case["steps"], start=1):
+                command_input = step["input"]
+                expected = normalize(step["expected_output"])
+                command_history.append(command_input)
+                session_input = "\n".join(command_history + ["bye"]) + "\n"
 
-            if run_result.returncode != 0:
-                actual = normalize(run_result.stdout + run_result.stderr)
-                fail(test_id, step_number, command_input, expected, actual)
+                test_save_file.unlink(missing_ok=True)
+                initial_save_file = test_case.get("initial_save_file")
+                if initial_save_file is not None:
+                    test_save_file.write_text(initial_save_file, encoding="utf-8")
 
-            try:
-                actual = extract_reply(run_result.stdout, len(command_history))
-            except ValueError as exception:
-                fail(test_id, step_number, command_input, expected, str(exception))
+                run_result = run_process(run_command, session_input, test_environment)
 
-            print(f"> {command_input}")
-            print(actual)
+                if run_result.returncode != 0:
+                    actual = normalize(run_result.stdout + run_result.stderr)
+                    fail(test_id, step_number, command_input, expected, actual)
 
-            if actual != expected:
-                fail(test_id, step_number, command_input, expected, actual)
+                try:
+                    actual = extract_reply(run_result.stdout, len(command_history))
+                except ValueError as exception:
+                    fail(test_id, step_number, command_input, expected, str(exception))
 
-            print("PASS\n")
-            passed_steps += 1
+                print(f"> {command_input}")
+                print(actual)
+
+                if actual != expected:
+                    fail(test_id, step_number, command_input, expected, actual)
+
+                print("PASS\n")
+                passed_steps += 1
+    finally:
+        shutil.rmtree(test_data_directory, ignore_errors=True)
 
     print(f"ALL UI TESTS PASSED ({passed_steps} command checks)")
     return 0
