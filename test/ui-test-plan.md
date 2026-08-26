@@ -74,6 +74,20 @@ The runner requires Java 25, builds before testing, compares each PotatoBot repl
           "expected_output": "PotatoBot:\n  Here are the tasks in your list:\n    1.[ ] read book (Todo)"
         }
       ]
+    },
+    {
+      "id": "UI-004",
+      "aim": "Save the current task list before exiting PotatoBot.",
+      "steps": [
+        {
+          "input": "add buy potatoes",
+          "expected_output": "PotatoBot:\n  Added: buy potatoes"
+        },
+        {
+          "input": "bye",
+          "expected_output": "PotatoBot:\n  Tasks saved to ./data/potatabot.txt\n\n================================================================================\nBye. I'm rolling back to the potato patch. Hope to see you again soon!\n================================================================================"
+        }
+      ]
     }
   ]
 }
