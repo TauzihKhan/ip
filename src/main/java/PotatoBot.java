@@ -5,10 +5,10 @@ import java.util.List;
  * Runs PotatoBot's text-based interaction with the user.
  */
 public class PotatoBot {
-    private static final String EXIT_COMMAND = "bye";
     private static final String SAVE_FILE_NAME = "./data/potatabot.txt";
     private static final String SAVE_FILE_ENVIRONMENT_VARIABLE = "POTATOBOT_SAVE_FILE";
     private final TaskList itemList = new TaskList();
+    private final Parser parser = new Parser();
     private final Storage storage = new Storage(
             System.getenv().getOrDefault(SAVE_FILE_ENVIRONMENT_VARIABLE, SAVE_FILE_NAME));
     private final Ui ui = new Ui();
@@ -30,16 +30,11 @@ public class PotatoBot {
                 break;
             }
 
-            // Special Exit command
-            if (EXIT_COMMAND.equals(input)) {
-                ui.showBlankLine();
-                handleEnd();
-                break;
-            }
-
-            // For non breaking tasks
             try {
-                handleInput(input);
+                Command command = parser.parse(input);
+                if (!executeCommand(command)) {
+                    break;
+                }
             } catch (PotatoBotException exception) {
                 ui.showMessage(exception.getMessage());
             }
@@ -120,68 +115,26 @@ public class PotatoBot {
         ui.showMessage("Task deleted: " + deletedTask + "\nKeep it going!");
     }
 
-    private static int parseItemNumber(String input) throws PotatoBotException {
-        try {
-            return Integer.parseInt(input);
-        } catch (NumberFormatException exception) {
-            throw new PotatoBotException("Do you hear yourself?? Task number must be a whole number.");
+    /**
+     * Executes a parsed command.
+     *
+     * @param command command to execute.
+     * @return {@code false} when PotatoBot should stop; {@code true} otherwise.
+     * @throws PotatoBotException if the command cannot be applied to the task list.
+     */
+    private boolean executeCommand(Command command) throws PotatoBotException {
+        switch (command.getType()) {
+        case BYE -> {
+            ui.showBlankLine();
+            handleEnd();
+            return false;
         }
-    }
-
-    private void handleInput(String input) throws PotatoBotException {
-        String[] inputSplit = input.split(" ", 2);
-        CommandType command = CommandType.parse(inputSplit[0]);
-
-        if (command == CommandType.LIST && inputSplit.length == 1) {
-            ui.showMessage(itemList.printList());
-            return;
+        case LIST -> ui.showMessage(itemList.printList());
+        case MARK -> markItem(command.getTaskNumber());
+        case UNMARK -> unmarkItem(command.getTaskNumber());
+        case DELETE -> deleteItem(command.getTaskNumber());
+        case ADD, TODO, DEADLINE, EVENT -> addToList(command.getTask());
         }
-
-        if (inputSplit.length < 2) {
-            throw new PotatoBotException("Me no gets?");
-        }
-
-        else if (command == CommandType.MARK) {
-            int itemNumber = parseItemNumber(inputSplit[1]);
-            markItem(itemNumber);
-            return;
-        }
-
-        else if (command == CommandType.UNMARK) {
-            int itemNumber = parseItemNumber(inputSplit[1]);
-            unmarkItem(itemNumber);
-            return;
-        }
-
-        else if (command == CommandType.DELETE) {
-            int itemNumber = parseItemNumber(inputSplit[1]);
-            deleteItem(itemNumber);
-            return;
-        }
-
-        else if (command == CommandType.TODO) {
-            addToList(new Todo(inputSplit[1]));
-            return;
-        }
-
-        else if (command == CommandType.DEADLINE) {
-            String[] deadlineDetails = inputSplit[1].split(" /by ", 2);
-            addToList(new Deadline(deadlineDetails[0], deadlineDetails[1]));
-            return;
-        }
-
-        else if (command == CommandType.EVENT) {
-            String[] eventDetails = inputSplit[1].split(" /from ", 2);
-            String[] eventTimes = eventDetails[1].split(" /to ", 2);
-            addToList(new Event(eventDetails[0], eventTimes[0], eventTimes[1]));
-            return;
-        }
-
-        else if (command == CommandType.ADD) {
-            addToList(new Task(inputSplit[1]));
-            return;
-        }
-
-        throw new PotatoBotException("Me no gets?");
+        return true;
     }
 }
