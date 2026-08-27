@@ -2,7 +2,6 @@
  * Converts raw user input into commands that PotatoBot can execute.
  */
 public class Parser {
-    private static final int NO_TASK_NUMBER = 0;
     private static final String INVALID_COMMAND_MESSAGE = "Me no gets?";
 
     /**
@@ -17,19 +16,24 @@ public class Parser {
         CommandType commandType = CommandType.parse(inputParts[0]);
 
         if (inputParts.length == 1) {
-            if (commandType == CommandType.LIST || commandType == CommandType.BYE) {
-                return new Command(commandType, NO_TASK_NUMBER, null);
+            if (commandType == CommandType.LIST) {
+                return new ListCommand();
+            }
+            if (commandType == CommandType.BYE) {
+                return new ExitCommand();
             }
             throw new PotatoBotException(INVALID_COMMAND_MESSAGE);
         }
 
         String argument = inputParts[1];
         return switch (commandType) {
-        case MARK, UNMARK, DELETE -> new Command(commandType, parseTaskNumber(argument), null);
-        case ADD -> new Command(commandType, NO_TASK_NUMBER, new Task(argument));
-        case TODO -> new Command(commandType, NO_TASK_NUMBER, new Todo(argument));
-        case DEADLINE -> new Command(commandType, NO_TASK_NUMBER, parseDeadline(argument));
-        case EVENT -> new Command(commandType, NO_TASK_NUMBER, parseEvent(argument));
+        case MARK -> new MarkCommand(parseTaskNumber(argument));
+        case UNMARK -> new UnmarkCommand(parseTaskNumber(argument));
+        case DELETE -> new DeleteCommand(parseTaskNumber(argument));
+        case ADD -> new AddCommand(new Task(argument));
+        case TODO -> new AddCommand(new Todo(argument));
+        case DEADLINE -> new AddCommand(parseDeadline(argument));
+        case EVENT -> new AddCommand(parseEvent(argument));
         case LIST, BYE -> throw new PotatoBotException(INVALID_COMMAND_MESSAGE);
         };
     }

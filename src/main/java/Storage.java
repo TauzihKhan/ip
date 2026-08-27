@@ -16,6 +16,7 @@ public class Storage {
     private static final String EVENT_TO_MARKER = " to: ";
 
     private final Path filePath;
+    private final String displayFilePath;
 
     /**
      * Creates a storage manager for the specified data file.
@@ -23,7 +24,22 @@ public class Storage {
      * @param filePath path of the data file.
      */
     public Storage(String filePath) {
+        this(filePath, filePath);
+    }
+
+    /**
+     * Creates a storage manager with separate physical and user-visible paths.
+     *
+     * @param filePath physical path of the data file.
+     * @param displayFilePath data-file path shown to the user.
+     */
+    public Storage(String filePath, String displayFilePath) {
         this.filePath = Path.of(filePath);
+        this.displayFilePath = displayFilePath;
+    }
+
+    public String getDisplayFilePath() {
+        return displayFilePath;
     }
 
     /**
