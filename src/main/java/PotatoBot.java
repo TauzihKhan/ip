@@ -5,43 +5,39 @@ import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Scanner;
 
 /**
  * Runs PotatoBot's text-based interaction with the user.
  */
 public class PotatoBot {
-    private static final TaskList itemList = new TaskList();
-    private static final String SEPARATOR = "=".repeat(80);
     private static final String EXIT_COMMAND = "bye";
     private static final String SAVE_FILE_NAME = "./data/potatabot.txt";
     private static final String SAVE_FILE_ENVIRONMENT_VARIABLE = "POTATOBOT_SAVE_FILE";
     private static final Path SAVE_FILE = Path.of(
             System.getenv().getOrDefault(SAVE_FILE_ENVIRONMENT_VARIABLE, SAVE_FILE_NAME));
-    private static final String BANNER = """
-             ____       _        _        ____        _           _...._
-            |  _ \\ ___ | |_ __ _| |_ ___ | __ )  ___ | |_     .-'      '-.
-            | |_) / _ \\| __/ _` | __/ _ \\|  _ \\ / _ \\| __|   /  .  .   .  \\
-            |  __/ (_) | || (_| | || (_) | |_) | (_) | |_    | .    .     .|
-            |_|   \\___/ \\__\\__,_|\\__\\___/|____/ \\___/ \\__|    \\__ .   .    /
-                                                                 '-.____.-'
-            """;
+    private final TaskList itemList = new TaskList();
+    private final Ui ui = new Ui();
 
     public static void main(String[] args) {
-        Scanner scanner = new Scanner(System.in);
-        printGreeting();
+        new PotatoBot().run();
+    }
+
+    /**
+     * Runs the command loop until the user exits or standard input ends.
+     */
+    public void run() {
+        ui.showGreeting();
         handleStart();
 
         while (true) {
-            System.out.print("Me: ");
-            if (!scanner.hasNextLine()) {
+            String input = ui.readCommand();
+            if (input == null) {
                 break;
             }
-            String input = scanner.nextLine();
 
             // Special Exit command
             if (EXIT_COMMAND.equals(input)) {
-                System.out.println();
+                ui.showBlankLine();
                 handleEnd();
                 break;
             }
@@ -50,31 +46,14 @@ public class PotatoBot {
             try {
                 handleInput(input);
             } catch (PotatoBotException exception) {
-                printMessageBox(exception.getMessage());
+                ui.showMessage(exception.getMessage());
             }
         }
-        scanner.close();
-    }
-
-    // Print welcome message
-    private static void printGreeting() {
-        System.out.println(SEPARATOR);
-        System.out.print(BANNER);
-        System.out.println("Hello! I'm PotatoBot, your trusty spud assistant.");
-        System.out
-                .println("What tasks do you want me to store for you? (Say \"bye\" if you want me to leave you alone)");
-        System.out.println(SEPARATOR + "\n");
-    }
-
-    // Print farewell message
-    private static void printFarewell() {
-        System.out.println(SEPARATOR);
-        System.out.println("Bye. I'm rolling back to the potato patch. Hope to see you again soon!");
-        System.out.println(SEPARATOR);
+        ui.close();
     }
 
     // Saves the current task list before ending the application.
-    private static void handleEnd() {
+    private void handleEnd() {
         try {
             Path dataDirectory = SAVE_FILE.getParent();
             if (Files.notExists(dataDirectory)) {
@@ -91,19 +70,19 @@ public class PotatoBot {
                     StandardCharsets.UTF_8,
                     StandardOpenOption.WRITE,
                     StandardOpenOption.TRUNCATE_EXISTING);
-            printMessageBox("Tasks saved to " + SAVE_FILE_NAME);
+            ui.showMessage("Tasks saved to " + SAVE_FILE_NAME);
         } catch (IOException exception) {
-            printMessageBox("I couldn't save your tasks: " + exception.getMessage());
+            ui.showMessage("I couldn't save your tasks: " + exception.getMessage());
         }
 
-        printFarewell();
+        ui.showFarewell();
     }
 
     /**
      * Loads the saved task list when the application starts.
      * A missing save file represents a new user with an empty task list.
      */
-    private static void handleStart() {
+    private void handleStart() {
         if (Files.notExists(SAVE_FILE)) {
             return;
         }
@@ -125,7 +104,7 @@ public class PotatoBot {
                 itemList.add(savedTask);
             }
         } catch (IOException | PotatoBotException exception) {
-            printMessageBox("I couldn't load your saved tasks: " + exception.getMessage());
+            ui.showMessage("I couldn't load your saved tasks: " + exception.getMessage());
         }
     }
 
@@ -197,18 +176,12 @@ public class PotatoBot {
         return new Task(taskDetails);
     }
 
-    // Prints a message inside PotatoBot's standard reply box.
-    private static void printMessageBox(String message) {
-        String indentedMessage = message.replace("\n", "\n  ");
-        System.out.println("PotatoBot:\n  " + indentedMessage + "\n");
-    }
-
-    private static void addToList(Task addition) throws PotatoBotException {
+    private void addToList(Task addition) throws PotatoBotException {
         itemList.add(addition);
-        printMessageBox("Added: " + addition);
+        ui.showMessage("Added: " + addition);
     }
 
-    private static void markItem(int index) throws PotatoBotException {
+    private void markItem(int index) throws PotatoBotException {
         if (index <= 0) {
             throw new PotatoBotException("Do you hear yourself??");
         }
@@ -218,10 +191,10 @@ public class PotatoBot {
                     "Think again... We only got " + itemList.size() + " items in the list...");
         }
         itemList.markDone(index - 1);
-        printMessageBox("Task completed: " + itemList.get(index - 1) + "\nKeep going!");
+        ui.showMessage("Task completed: " + itemList.get(index - 1) + "\nKeep going!");
     }
 
-    private static void unmarkItem(int index) throws PotatoBotException {
+    private void unmarkItem(int index) throws PotatoBotException {
         if (index <= 0) {
             throw new PotatoBotException("Do you hear yourself??");
         }
@@ -232,10 +205,10 @@ public class PotatoBot {
         }
 
         itemList.markReset(index - 1);
-        printMessageBox("Task Reset: " + itemList.get(index - 1) + "\nKeep going!");
+        ui.showMessage("Task Reset: " + itemList.get(index - 1) + "\nKeep going!");
     }
 
-    private static void deleteItem(int index) throws PotatoBotException {
+    private void deleteItem(int index) throws PotatoBotException {
         if (index <= 0) {
             throw new PotatoBotException("Do you hear yourself??");
         }
@@ -246,7 +219,7 @@ public class PotatoBot {
         }
 
         Task deletedTask = itemList.delete(index - 1);
-        printMessageBox("Task deleted: " + deletedTask + "\nKeep it going!");
+        ui.showMessage("Task deleted: " + deletedTask + "\nKeep it going!");
     }
 
     private static int parseItemNumber(String input) throws PotatoBotException {
@@ -257,12 +230,12 @@ public class PotatoBot {
         }
     }
 
-    private static void handleInput(String input) throws PotatoBotException {
+    private void handleInput(String input) throws PotatoBotException {
         String[] inputSplit = input.split(" ", 2);
         CommandType command = CommandType.parse(inputSplit[0]);
 
         if (command == CommandType.LIST && inputSplit.length == 1) {
-            printMessageBox(itemList.printList());
+            ui.showMessage(itemList.printList());
             return;
         }
 
