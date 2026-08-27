@@ -1,9 +1,4 @@
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.StandardOpenOption;
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -13,9 +8,9 @@ public class PotatoBot {
     private static final String EXIT_COMMAND = "bye";
     private static final String SAVE_FILE_NAME = "./data/potatabot.txt";
     private static final String SAVE_FILE_ENVIRONMENT_VARIABLE = "POTATOBOT_SAVE_FILE";
-    private static final Path SAVE_FILE = Path.of(
-            System.getenv().getOrDefault(SAVE_FILE_ENVIRONMENT_VARIABLE, SAVE_FILE_NAME));
     private final TaskList itemList = new TaskList();
+    private final Storage storage = new Storage(
+            System.getenv().getOrDefault(SAVE_FILE_ENVIRONMENT_VARIABLE, SAVE_FILE_NAME));
     private final Ui ui = new Ui();
 
     public static void main(String[] args) {
@@ -55,21 +50,7 @@ public class PotatoBot {
     // Saves the current task list before ending the application.
     private void handleEnd() {
         try {
-            Path dataDirectory = SAVE_FILE.getParent();
-            if (Files.notExists(dataDirectory)) {
-                Files.createDirectories(dataDirectory);
-            }
-
-            if (Files.notExists(SAVE_FILE)) {
-                Files.createFile(SAVE_FILE);
-            }
-
-            Files.writeString(
-                    SAVE_FILE,
-                    itemList.toFileContents(),
-                    StandardCharsets.UTF_8,
-                    StandardOpenOption.WRITE,
-                    StandardOpenOption.TRUNCATE_EXISTING);
+            storage.save(itemList);
             ui.showMessage("Tasks saved to " + SAVE_FILE_NAME);
         } catch (IOException exception) {
             ui.showMessage("I couldn't save your tasks: " + exception.getMessage());
@@ -83,97 +64,14 @@ public class PotatoBot {
      * A missing save file represents a new user with an empty task list.
      */
     private void handleStart() {
-        if (Files.notExists(SAVE_FILE)) {
-            return;
-        }
-
         try {
-            List<Task> savedTasks = new ArrayList<>();
-            for (String line : Files.readAllLines(SAVE_FILE, StandardCharsets.UTF_8)) {
-                if (!line.isBlank()) {
-                    savedTasks.add(parseSavedTask(line));
-                }
-            }
-
-            if (savedTasks.size() > TaskList.MAX_SIZE) {
-                throw new PotatoBotException(
-                        "The save file contains more than " + TaskList.MAX_SIZE + " tasks.");
-            }
-
-            for (Task savedTask : savedTasks) {
+            List<Task> loadedTasks = storage.load();
+            for (Task savedTask : loadedTasks) {
                 itemList.add(savedTask);
             }
         } catch (IOException | PotatoBotException exception) {
             ui.showMessage("I couldn't load your saved tasks: " + exception.getMessage());
         }
-    }
-
-    /**
-     * Converts one line from the save file back into a task.
-     *
-     * @param line Line containing a saved task.
-     * @return task represented by the line.
-     * @throws PotatoBotException if the line does not use a valid storage format.
-     */
-    private static Task parseSavedTask(String line) throws PotatoBotException {
-        boolean isMarked;
-        String taskDetails;
-        if (line.startsWith("[X] ")) {
-            isMarked = true;
-            taskDetails = line.substring(4);
-        } else if (line.startsWith("[ ] ")) {
-            isMarked = false;
-            taskDetails = line.substring(4);
-        } else {
-            throw new PotatoBotException("Invalid completion status in line: " + line);
-        }
-
-        Task task = parseTaskDetails(taskDetails);
-        if (isMarked) {
-            task.markDone();
-        }
-        return task;
-    }
-
-    /**
-     * Reconstructs a task and its subtype-specific details from saved text.
-     *
-     * @param taskDetails Saved task text without its completion status.
-     * @return reconstructed task.
-     * @throws PotatoBotException if subtype-specific details are incomplete.
-     */
-    private static Task parseTaskDetails(String taskDetails) throws PotatoBotException {
-        String todoSuffix = " (Todo)";
-        if (taskDetails.endsWith(todoSuffix)) {
-            String description = taskDetails.substring(0, taskDetails.length() - todoSuffix.length());
-            return new Todo(description);
-        }
-
-        String deadlineMarker = " (Deadline, by: ";
-        int deadlineMarkerIndex = taskDetails.lastIndexOf(deadlineMarker);
-        if (deadlineMarkerIndex >= 0 && taskDetails.endsWith(")")) {
-            String description = taskDetails.substring(0, deadlineMarkerIndex);
-            String by = taskDetails.substring(
-                    deadlineMarkerIndex + deadlineMarker.length(), taskDetails.length() - 1);
-            return new Deadline(description, by);
-        }
-
-        String eventMarker = " (Event, from: ";
-        int eventMarkerIndex = taskDetails.lastIndexOf(eventMarker);
-        if (eventMarkerIndex >= 0 && taskDetails.endsWith(")")) {
-            String description = taskDetails.substring(0, eventMarkerIndex);
-            String eventTimes = taskDetails.substring(
-                    eventMarkerIndex + eventMarker.length(), taskDetails.length() - 1);
-            int toMarkerIndex = eventTimes.lastIndexOf(" to: ");
-            if (toMarkerIndex < 0) {
-                throw new PotatoBotException("Invalid event details: " + taskDetails);
-            }
-            String from = eventTimes.substring(0, toMarkerIndex);
-            String to = eventTimes.substring(toMarkerIndex + " to: ".length());
-            return new Event(description, from, to);
-        }
-
-        return new Task(taskDetails);
     }
 
     private void addToList(Task addition) throws PotatoBotException {
