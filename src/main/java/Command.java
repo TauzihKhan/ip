@@ -1,0 +1,24 @@
+/**
+ * Represents an executable user command.
+ */
+public abstract class Command {
+    /**
+     * Executes this command using the application's collaborators.
+     *
+     * @param tasks task list to read or update.
+     * @param ui user interface used to report the result.
+     * @param storage storage used when persistence is required.
+     * @throws PotatoBotException if the command cannot be completed.
+     */
+    public abstract void execute(TaskList tasks, Ui ui, Storage storage)
+            throws PotatoBotException;
+
+    /**
+     * Indicates whether PotatoBot should stop after this command.
+     *
+     * @return {@code true} if this command exits PotatoBot.
+     */
+    public boolean isExit() {
+        return false;
+    }
+}
