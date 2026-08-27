@@ -18,12 +18,12 @@ The runner requires Java 25, builds before testing, compares each PotatoBot repl
           "expected_output": "PotatoBot:\n  Added: read book (Todo)"
         },
         {
-          "input": "deadline return book /by Sunday",
-          "expected_output": "PotatoBot:\n  Added: return book (Deadline, by: Sunday)"
+          "input": "deadline return book /by 2019-12-02",
+          "expected_output": "PotatoBot:\n  Added: return book (Deadline, by: Dec 02 2019)"
         },
         {
-          "input": "event project meeting /from Mon 2pm /to 4pm",
-          "expected_output": "PotatoBot:\n  Added: project meeting (Event, from: Mon 2pm to: 4pm)"
+          "input": "event project meeting /from 2019-12-02 /to 2019-12-03",
+          "expected_output": "PotatoBot:\n  Added: project meeting (Event, from: Dec 02 2019 to: Dec 03 2019)"
         },
         {
           "input": "mark 1",
@@ -31,7 +31,7 @@ The runner requires Java 25, builds before testing, compares each PotatoBot repl
         },
         {
           "input": "list",
-          "expected_output": "PotatoBot:\n  Here are the tasks in your list:\n    1.[X] read book (Todo)\n    2.[ ] return book (Deadline, by: Sunday)\n    3.[ ] project meeting (Event, from: Mon 2pm to: 4pm)"
+          "expected_output": "PotatoBot:\n  Here are the tasks in your list:\n    1.[X] read book (Todo)\n    2.[ ] return book (Deadline, by: Dec 02 2019)\n    3.[ ] project meeting (Event, from: Dec 02 2019 to: Dec 03 2019)"
         }
       ]
     },
@@ -92,11 +92,35 @@ The runner requires Java 25, builds before testing, compares each PotatoBot repl
     {
       "id": "UI-005",
       "aim": "Load saved tasks and restore their types and completion states on startup.",
-      "initial_save_file": "[X] read book (Todo)\n[ ] return book (Deadline, by: Sunday)\n[ ] project meeting (Event, from: Mon 2pm to: 4pm)",
+      "initial_save_file": "[X] read book (Todo)\n[ ] return book (Deadline, by: Dec 02 2019)\n[ ] project meeting (Event, from: Dec 02 2019 to: Dec 03 2019)",
       "steps": [
         {
           "input": "list",
-          "expected_output": "PotatoBot:\n  Here are the tasks in your list:\n    1.[X] read book (Todo)\n    2.[ ] return book (Deadline, by: Sunday)\n    3.[ ] project meeting (Event, from: Mon 2pm to: 4pm)"
+          "expected_output": "PotatoBot:\n  Here are the tasks in your list:\n    1.[X] read book (Todo)\n    2.[ ] return book (Deadline, by: Dec 02 2019)\n    3.[ ] project meeting (Event, from: Dec 02 2019 to: Dec 03 2019)"
+        }
+      ]
+    },
+    {
+      "id": "UI-006",
+      "aim": "Reject invalid event dates and an end date before the start date.",
+      "steps": [
+        {
+          "input": "event project meeting /from 2019-13-02 /to 2019-12-03",
+          "expected_output": "PotatoBot:\n  Use the date format YYYY-MM-DD, for example 2019-12-02."
+        },
+        {
+          "input": "event project meeting /from 2019-12-03 /to 2019-12-02",
+          "expected_output": "PotatoBot:\n  The event end date cannot be before its start date."
+        }
+      ]
+    },
+    {
+      "id": "UI-007",
+      "aim": "Reject an invalid deadline date.",
+      "steps": [
+        {
+          "input": "deadline return book /by 2019-13-02",
+          "expected_output": "PotatoBot:\n  Use the date format YYYY-MM-DD, for example 2019-12-02."
         }
       ]
     }
