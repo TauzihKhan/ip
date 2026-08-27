@@ -1,14 +1,18 @@
+package potatobot.task;
+
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.Locale;
 
+import potatobot.exception.PotatoBotException;
+
 /**
  * Represents a task that occurs between given start and end dates.
  */
 public class Event extends Task {
-    private static final DateTimeFormatter OUTPUT_DATE_FORMAT =
-            DateTimeFormatter.ofPattern("MMM dd yyyy", Locale.ENGLISH);
+    private static final DateTimeFormatter OUTPUT_DATE_FORMAT = DateTimeFormatter.ofPattern("MMM dd yyyy",
+            Locale.ENGLISH);
 
     private final LocalDate from;
     private final LocalDate to;
@@ -17,9 +21,10 @@ public class Event extends Task {
      * Creates an event occurring between two dates.
      *
      * @param description Description of the event.
-     * @param from Start date in YYYY-MM-DD format.
-     * @param to End date in YYYY-MM-DD format.
-     * @throws PotatoBotException if either date is invalid or the end date occurs before the start date.
+     * @param from        Start date in YYYY-MM-DD format.
+     * @param to          End date in YYYY-MM-DD format.
+     * @throws PotatoBotException if either date is invalid or the end date occurs
+     *                            before the start date.
      */
     public Event(String description, String from, String to)
             throws PotatoBotException {

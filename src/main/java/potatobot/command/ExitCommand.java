@@ -1,4 +1,10 @@
+package potatobot.command;
+
 import java.io.IOException;
+
+import potatobot.storage.Storage;
+import potatobot.task.TaskList;
+import potatobot.ui.Ui;
 
 /**
  * Saves the task list and exits PotatoBot.

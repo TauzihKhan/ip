@@ -1,6 +1,5 @@
 # Compiled Java and build output
 *.class
-/target/
 /build/
 /out/
 /bin/

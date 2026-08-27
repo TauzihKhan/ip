@@ -1,10 +1,16 @@
+package potatobot.command;
+
+import potatobot.exception.PotatoBotException;
+import potatobot.task.TaskList;
+
 /**
- * Represents a command that operates on a task selected by its displayed number.
+ * Represents a command that operates on a task selected by its displayed
+ * number.
  */
 public abstract class TaskNumberCommand extends Command {
     private final int taskNumber;
 
-    TaskNumberCommand(int taskNumber) {
+    protected TaskNumberCommand(int taskNumber) {
         this.taskNumber = taskNumber;
     }
 

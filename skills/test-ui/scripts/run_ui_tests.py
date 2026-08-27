@@ -88,7 +88,7 @@ def main():
     print("Build passed.\n")
 
     run_command = plan["run_command"]
-    test_data_directory = Path(tempfile.mkdtemp(prefix="potatobot-ui-", dir=PROJECT_ROOT / "target"))
+    test_data_directory = Path(tempfile.mkdtemp(prefix="potatobot-ui-", dir=PROJECT_ROOT / "build"))
     test_save_file = test_data_directory / "potatobot.txt"
     test_environment = os.environ.copy()
     test_environment["POTATOBOT_SAVE_FILE"] = str(test_save_file)

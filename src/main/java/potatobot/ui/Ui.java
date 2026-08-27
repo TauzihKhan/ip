@@ -1,3 +1,5 @@
+package potatobot.ui;
+
 import java.util.Scanner;
 
 /**

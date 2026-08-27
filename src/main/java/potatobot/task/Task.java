@@ -1,3 +1,5 @@
+package potatobot.task;
+
 /**
  * Represents a Task and whether it has been completed
  */

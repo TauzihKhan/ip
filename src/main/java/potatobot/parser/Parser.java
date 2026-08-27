@@ -1,3 +1,19 @@
+package potatobot.parser;
+
+import potatobot.command.AddCommand;
+import potatobot.command.Command;
+import potatobot.command.CommandType;
+import potatobot.command.DeleteCommand;
+import potatobot.command.ExitCommand;
+import potatobot.command.ListCommand;
+import potatobot.command.MarkCommand;
+import potatobot.command.UnmarkCommand;
+import potatobot.exception.PotatoBotException;
+import potatobot.task.Deadline;
+import potatobot.task.Event;
+import potatobot.task.Task;
+import potatobot.task.Todo;
+
 /**
  * Converts raw user input into commands that PotatoBot can execute.
  */
@@ -27,14 +43,14 @@ public class Parser {
 
         String argument = inputParts[1];
         return switch (commandType) {
-        case MARK -> new MarkCommand(parseTaskNumber(argument));
-        case UNMARK -> new UnmarkCommand(parseTaskNumber(argument));
-        case DELETE -> new DeleteCommand(parseTaskNumber(argument));
-        case ADD -> new AddCommand(new Task(argument));
-        case TODO -> new AddCommand(new Todo(argument));
-        case DEADLINE -> new AddCommand(parseDeadline(argument));
-        case EVENT -> new AddCommand(parseEvent(argument));
-        case LIST, BYE -> throw new PotatoBotException(INVALID_COMMAND_MESSAGE);
+            case MARK -> new MarkCommand(parseTaskNumber(argument));
+            case UNMARK -> new UnmarkCommand(parseTaskNumber(argument));
+            case DELETE -> new DeleteCommand(parseTaskNumber(argument));
+            case ADD -> new AddCommand(new Task(argument));
+            case TODO -> new AddCommand(new Todo(argument));
+            case DEADLINE -> new AddCommand(parseDeadline(argument));
+            case EVENT -> new AddCommand(parseEvent(argument));
+            case LIST, BYE -> throw new PotatoBotException(INVALID_COMMAND_MESSAGE);
         };
     }
 

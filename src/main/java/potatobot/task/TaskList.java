@@ -1,9 +1,13 @@
+package potatobot.task;
+
 import java.util.ArrayList;
 import java.util.List;
 
+import potatobot.exception.PotatoBotException;
+
 // Stores up to 100 tasks.
 public class TaskList {
-    static final int MAX_SIZE = 100;
+    public static final int MAX_SIZE = 100;
 
     private final List<Task> itemList;
 

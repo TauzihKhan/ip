@@ -1,5 +1,15 @@
+package potatobot;
+
 import java.io.IOException;
 import java.util.List;
+
+import potatobot.command.Command;
+import potatobot.exception.PotatoBotException;
+import potatobot.parser.Parser;
+import potatobot.storage.Storage;
+import potatobot.task.Task;
+import potatobot.task.TaskList;
+import potatobot.ui.Ui;
 
 /**
  * Runs PotatoBot's text-based interaction with the user.

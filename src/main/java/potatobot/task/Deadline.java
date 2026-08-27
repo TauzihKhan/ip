@@ -1,14 +1,18 @@
+package potatobot.task;
+
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.Locale;
 
+import potatobot.exception.PotatoBotException;
+
 /**
  * Represents a task that must be completed by a given date.
  */
 public class Deadline extends Task {
-    private static final DateTimeFormatter OUTPUT_DATE_FORMAT =
-            DateTimeFormatter.ofPattern("MMM dd yyyy", Locale.ENGLISH);
+    private static final DateTimeFormatter OUTPUT_DATE_FORMAT = DateTimeFormatter.ofPattern("MMM dd yyyy",
+            Locale.ENGLISH);
 
     private final LocalDate by;
 
@@ -16,7 +20,7 @@ public class Deadline extends Task {
      * Creates a task that must be completed by a given date.
      *
      * @param description Description of the task.
-     * @param by Deadline date in YYYY-MM-DD format.
+     * @param by          Deadline date in YYYY-MM-DD format.
      * @throws PotatoBotException if the deadline date is invalid.
      */
     public Deadline(String description, String by) throws PotatoBotException {

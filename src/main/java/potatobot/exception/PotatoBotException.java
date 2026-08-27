@@ -1,3 +1,5 @@
+package potatobot.exception;
+
 /**
  * Represents an error that PotatoBot can report to the user.
  */

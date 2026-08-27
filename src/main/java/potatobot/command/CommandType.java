@@ -1,3 +1,7 @@
+package potatobot.command;
+
+import potatobot.exception.PotatoBotException;
+
 /**
  * Represents a command supported by PotatoBot.
  */
