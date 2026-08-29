@@ -5,81 +5,130 @@ import java.util.List;
 
 import potatobot.exception.PotatoBotException;
 
-// Stores up to 100 tasks.
+/**
+ * Stores and manages a bounded list of tasks.
+ */
 public class TaskList {
+    /** Maximum number of tasks that the list can store. */
     public static final int MAX_SIZE = 100;
 
-    private final List<Task> itemList;
+    private final List<Task> tasks = new ArrayList<>(MAX_SIZE);
 
+    /**
+     * Creates an empty task list.
+     */
     public TaskList() {
-        itemList = new ArrayList<>(MAX_SIZE);
     }
 
+    /**
+     * Returns the task at the specified zero-based index.
+     *
+     * @param index Zero-based index of the task.
+     * @return Task at the specified index.
+     */
     public Task get(int index) {
-        return itemList.get(index);
+        return tasks.get(index);
     }
 
+    /**
+     * Returns the number of tasks in this list.
+     *
+     * @return Number of stored tasks.
+     */
     public int size() {
-        return itemList.size();
+        return tasks.size();
     }
 
     /**
      * Adds an item to the task list.
      *
-     * @throws PotatoBotException if the task array is already full
+     * @param item Task to add.
+     * @throws PotatoBotException If the task list is already full.
      */
     public void add(Task item) throws PotatoBotException {
-        if (itemList.size() >= MAX_SIZE) {
+        if (tasks.size() >= MAX_SIZE) {
             throw new PotatoBotException("Your potato sack is full! It can only hold 100 items.");
         }
 
-        itemList.add(item);
+        tasks.add(item);
     }
 
+    /**
+     * Returns {@code true} if this task list contains no tasks.
+     *
+     * @return {@code true} if this list is empty.
+     */
     public boolean isEmpty() {
-        return itemList.isEmpty();
+        return tasks.isEmpty();
     }
 
+    /**
+     * Marks the task at the specified index as completed.
+     *
+     * @param index Zero-based index of the task to mark.
+     */
     public void markDone(int index) {
-        itemList.get(index).markDone();
+        tasks.get(index).markDone();
     }
 
+    /**
+     * Marks the task at the specified index as incomplete.
+     *
+     * @param index Zero-based index of the task to reset.
+     */
     public void markReset(int index) {
-        itemList.get(index).markReset();
+        tasks.get(index).markReset();
     }
 
+    /**
+     * Removes and returns the task at the specified index.
+     *
+     * @param index Zero-based index of the task to remove.
+     * @return Removed task.
+     */
     public Task delete(int index) {
-        return itemList.remove(index);
+        return tasks.remove(index);
     }
 
+    /**
+     * Formats all tasks as a numbered list for display to the user.
+     *
+     * @return Formatted task list, or an empty-list message if no tasks exist.
+     */
     public String printList() {
         if (isEmpty()) {
             return "Nothing to see here...";
         }
 
-        String message = "Here are the tasks in your list:";
-        for (int i = 0; i < itemList.size(); i++) {
-            message += "\n  " + (i + 1) + ".[" + itemList.get(i).getStatusIcon() + "] " + itemList.get(i);
+        StringBuilder message = new StringBuilder("Here are the tasks in your list:");
+        for (int i = 0; i < tasks.size(); i++) {
+            Task task = tasks.get(i);
+            message.append("\n  ")
+                    .append(i + 1)
+                    .append(".[")
+                    .append(task.getStatusIcon())
+                    .append("] ")
+                    .append(task);
         }
-        return message;
+        return message.toString();
     }
 
     /**
      * Converts the task list to the text stored in the save file.
      * Each task occupies one line and includes its completion status.
      *
-     * @return the task list in its storage format.
+     * @return Task list in its storage format.
      */
     public String toFileContents() {
         StringBuilder fileContents = new StringBuilder();
-        for (Task item : itemList) {
+        for (Task task : tasks) {
             if (!fileContents.isEmpty()) {
                 fileContents.append(System.lineSeparator());
             }
             fileContents.append("[")
-                    .append(item.getStatusIcon())
+                    .append(task.getStatusIcon())
                     .append("] ")
-                    .append(item);
+                    .append(task);
         }
         return fileContents.toString();
     }
