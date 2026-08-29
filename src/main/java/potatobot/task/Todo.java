@@ -7,7 +7,7 @@ public class Todo extends Task {
     /**
      * Creates an undated task with the specified description.
      *
-     * @param description description of the task.
+     * @param description Description of the task.
      */
     public Todo(String description) {
         super(description);
@@ -16,7 +16,7 @@ public class Todo extends Task {
     /**
      * Formats this task with its todo type label.
      *
-     * @return task description and todo type label.
+     * @return Task description and todo type label.
      */
     @Override
     public String toString() {

@@ -5,7 +5,7 @@ package potatobot.task;
  */
 public class Task {
     private final String description;
-    private boolean isMarked;
+    private boolean isMarked = false;
 
     /**
      * Creates an incomplete task with the specified description.
@@ -14,7 +14,6 @@ public class Task {
      */
     public Task(String description) {
         this.description = description;
-        isMarked = false;
     }
 
     /**
@@ -43,7 +42,7 @@ public class Task {
     /**
      * Returns this task's description.
      *
-     * @return task description.
+     * @return Task description.
      */
     @Override
     public String toString() {

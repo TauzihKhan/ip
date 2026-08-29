@@ -17,7 +17,8 @@ import potatobot.ui.Ui;
 public class PotatoBot {
     private static final String SAVE_FILE_NAME = "./data/potatabot.txt";
     private static final String SAVE_FILE_ENVIRONMENT_VARIABLE = "POTATOBOT_SAVE_FILE";
-    private final TaskList itemList = new TaskList();
+
+    private final TaskList tasks = new TaskList();
     private final Parser parser = new Parser();
     private final Storage storage = new Storage(
             System.getenv().getOrDefault(SAVE_FILE_ENVIRONMENT_VARIABLE, SAVE_FILE_NAME),
@@ -33,7 +34,7 @@ public class PotatoBot {
     /**
      * Starts PotatoBot.
      *
-     * @param args command-line arguments; currently unused.
+     * @param args Command-line arguments; currently unused.
      */
     public static void main(String[] args) {
         new PotatoBot().run();
@@ -55,7 +56,7 @@ public class PotatoBot {
 
             try {
                 Command command = parser.parse(input);
-                command.execute(itemList, ui, storage);
+                command.execute(tasks, ui, storage);
                 isExit = command.isExit();
             } catch (PotatoBotException exception) {
                 ui.showMessage(exception.getMessage());
@@ -72,7 +73,7 @@ public class PotatoBot {
         try {
             List<Task> loadedTasks = storage.load();
             for (Task savedTask : loadedTasks) {
-                itemList.add(savedTask);
+                tasks.add(savedTask);
             }
         } catch (IOException | PotatoBotException exception) {
             ui.showMessage("I couldn't load your saved tasks: " + exception.getMessage());

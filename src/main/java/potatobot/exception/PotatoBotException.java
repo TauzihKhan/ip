@@ -7,7 +7,7 @@ public class PotatoBotException extends Exception {
     /**
      * Creates an exception with a message suitable for display to the user.
      *
-     * @param message description of the error.
+     * @param message Description of the error.
      */
     public PotatoBotException(String message) {
         super(message);

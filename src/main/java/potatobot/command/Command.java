@@ -18,10 +18,10 @@ public abstract class Command {
     /**
      * Executes this command using the application's collaborators.
      *
-     * @param tasks   task list to read or update.
-     * @param ui      user interface used to report the result.
-     * @param storage storage used when persistence is required.
-     * @throws PotatoBotException if the command cannot be completed.
+     * @param tasks   Task list to read or update.
+     * @param ui      User interface used to report the result.
+     * @param storage Storage used when persistence is required.
+     * @throws PotatoBotException If the command cannot be completed.
      */
     public abstract void execute(TaskList tasks, Ui ui, Storage storage)
             throws PotatoBotException;

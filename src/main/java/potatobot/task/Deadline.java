@@ -14,7 +14,7 @@ public class Deadline extends Task {
     private static final DateTimeFormatter OUTPUT_DATE_FORMAT = DateTimeFormatter.ofPattern("MMM dd yyyy",
             Locale.ENGLISH);
 
-    private final LocalDate by;
+    private final LocalDate deadlineDate;
 
     /**
      * Creates a task that must be completed by a given date.
@@ -27,7 +27,7 @@ public class Deadline extends Task {
         super(description);
 
         try {
-            this.by = parseDate(by);
+            deadlineDate = parseDate(by);
         } catch (DateTimeParseException exception) {
             throw new PotatoBotException(
                     "Use the date format YYYY-MM-DD, for example 2019-12-02.");
@@ -38,7 +38,7 @@ public class Deadline extends Task {
      * Parses either a user-input date or a formatted date read from storage.
      *
      * @param date Date to parse.
-     * @return parsed date.
+     * @return Parsed date.
      * @throws DateTimeParseException if neither supported format matches.
      */
     private static LocalDate parseDate(String date) {
@@ -52,11 +52,11 @@ public class Deadline extends Task {
     /**
      * Formats this task with its deadline date.
      *
-     * @return task description and formatted deadline date.
+     * @return Task description and formatted deadline date.
      */
     @Override
     public String toString() {
         return super.toString()
-                + " (Deadline, by: " + by.format(OUTPUT_DATE_FORMAT) + ")";
+                + " (Deadline, by: " + deadlineDate.format(OUTPUT_DATE_FORMAT) + ")";
     }
 }

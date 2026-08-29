@@ -16,13 +16,12 @@ public class Ui implements AutoCloseable {
                                                                  '-.____.-'
             """;
 
-    private final Scanner scanner;
+    private final Scanner scanner = new Scanner(System.in);
 
     /**
      * Creates a UI that reads from standard input.
      */
     public Ui() {
-        scanner = new Scanner(System.in);
     }
 
     /**
@@ -33,7 +32,8 @@ public class Ui implements AutoCloseable {
         System.out.print(BANNER);
         System.out.println("Hello! I'm PotatoBot, your trusty spud assistant.");
         System.out.println(
-                "What tasks do you want me to store for you? (Say \"bye\" if you want me to leave you alone)");
+                "What tasks do you want me to store for you? "
+                        + "(Say \"bye\" if you want me to leave you alone)");
         System.out.println(SEPARATOR + "\n");
     }
 
@@ -50,7 +50,7 @@ public class Ui implements AutoCloseable {
     /**
      * Displays a message inside PotatoBot's standard reply box.
      *
-     * @param message message to display.
+     * @param message Message to display.
      */
     public void showMessage(String message) {
         String indentedMessage = message.replace("\n", "\n  ");

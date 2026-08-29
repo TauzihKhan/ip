@@ -14,8 +14,8 @@ public class Event extends Task {
     private static final DateTimeFormatter OUTPUT_DATE_FORMAT = DateTimeFormatter.ofPattern("MMM dd yyyy",
             Locale.ENGLISH);
 
-    private final LocalDate from;
-    private final LocalDate to;
+    private final LocalDate startDate;
+    private final LocalDate endDate;
 
     /**
      * Creates an event occurring between two dates.
@@ -31,14 +31,14 @@ public class Event extends Task {
         super(description);
 
         try {
-            this.from = parseDate(from);
-            this.to = parseDate(to);
+            startDate = parseDate(from);
+            endDate = parseDate(to);
         } catch (DateTimeParseException exception) {
             throw new PotatoBotException(
                     "Use the date format YYYY-MM-DD, for example 2019-12-02.");
         }
 
-        if (this.to.isBefore(this.from)) {
+        if (endDate.isBefore(startDate)) {
             throw new PotatoBotException(
                     "The event end date cannot be before its start date.");
         }
@@ -48,8 +48,8 @@ public class Event extends Task {
      * Parses either a user-input date or a formatted date read from storage.
      *
      * @param date Date to parse.
-     * @return parsed date.
-     * @throws DateTimeParseException if neither supported format matches.
+     * @return Parsed date.
+     * @throws DateTimeParseException If neither supported format matches.
      */
     private static LocalDate parseDate(String date) {
         try {
@@ -62,12 +62,12 @@ public class Event extends Task {
     /**
      * Formats this task with its start and end dates.
      *
-     * @return task description and formatted event dates.
+     * @return Task description and formatted event dates.
      */
     @Override
     public String toString() {
         return super.toString()
-                + " (Event, from: " + from.format(OUTPUT_DATE_FORMAT)
-                + " to: " + to.format(OUTPUT_DATE_FORMAT) + ")";
+                + " (Event, from: " + startDate.format(OUTPUT_DATE_FORMAT)
+                + " to: " + endDate.format(OUTPUT_DATE_FORMAT) + ")";
     }
 }
