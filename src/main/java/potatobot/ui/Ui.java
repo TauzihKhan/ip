@@ -73,6 +73,9 @@ public class Ui implements AutoCloseable {
         System.out.println(SEPARATOR);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void close() {
         scanner.close();

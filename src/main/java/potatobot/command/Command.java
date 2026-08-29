@@ -10,6 +10,12 @@ import potatobot.ui.Ui;
  */
 public abstract class Command {
     /**
+     * Creates a command.
+     */
+    protected Command() {
+    }
+
+    /**
      * Executes this command using the application's collaborators.
      *
      * @param tasks   task list to read or update.

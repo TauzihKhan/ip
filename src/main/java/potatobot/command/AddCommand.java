@@ -21,6 +21,9 @@ public class AddCommand extends Command {
         this.task = task;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void execute(TaskList tasks, Ui ui, Storage storage) throws PotatoBotException {
         tasks.add(task);

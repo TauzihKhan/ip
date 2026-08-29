@@ -1,29 +1,50 @@
 package potatobot.task;
 
 /**
- * Represents a Task and whether it has been completed
+ * Represents a task and whether it has been completed.
  */
 public class Task {
     private final String description;
     private boolean isMarked;
 
+    /**
+     * Creates an incomplete task with the specified description.
+     *
+     * @param description description of the task.
+     */
     public Task(String description) {
         this.description = description;
         isMarked = false;
     }
 
+    /**
+     * Marks this task as completed.
+     */
     public void markDone() {
         isMarked = true;
     }
 
+    /**
+     * Marks this task as incomplete.
+     */
     public void markReset() {
         isMarked = false;
     }
 
+    /**
+     * Returns the symbol used to display this task's completion status.
+     *
+     * @return {@code "X"} when completed, or a space when incomplete.
+     */
     public String getStatusIcon() {
         return isMarked ? "X" : " ";
     }
 
+    /**
+     * Returns this task's description.
+     *
+     * @return task description.
+     */
     @Override
     public String toString() {
         return description;

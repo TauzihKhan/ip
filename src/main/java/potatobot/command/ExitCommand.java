@@ -10,6 +10,15 @@ import potatobot.ui.Ui;
  * Saves the task list and exits PotatoBot.
  */
 public class ExitCommand extends Command {
+    /**
+     * Creates a command that saves the task list and exits PotatoBot.
+     */
+    public ExitCommand() {
+    }
+
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void execute(TaskList tasks, Ui ui, Storage storage) {
         ui.showBlankLine();
@@ -22,6 +31,9 @@ public class ExitCommand extends Command {
         ui.showFarewell();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public boolean isExit() {
         return true;

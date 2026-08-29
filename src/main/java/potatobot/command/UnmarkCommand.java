@@ -18,6 +18,9 @@ public class UnmarkCommand extends TaskNumberCommand {
         super(taskNumber);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void execute(TaskList tasks, Ui ui, Storage storage) throws PotatoBotException {
         int taskIndex = getTaskIndex(tasks);

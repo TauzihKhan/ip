@@ -21,6 +21,12 @@ public class Parser {
     private static final String INVALID_COMMAND_MESSAGE = "Me no gets?";
 
     /**
+     * Creates a parser for PotatoBot commands.
+     */
+    public Parser() {
+    }
+
+    /**
      * Parses one line of user input.
      *
      * @param input user input to parse.

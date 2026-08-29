@@ -18,6 +18,11 @@ public enum CommandType {
 
     private final String commandWord;
 
+    /**
+     * Creates a command type associated with its user-facing command word.
+     *
+     * @param commandWord word that identifies the command in user input.
+     */
     CommandType(String commandWord) {
         this.commandWord = commandWord;
     }
@@ -25,7 +30,9 @@ public enum CommandType {
     /**
      * Converts a command word into its matching command type.
      *
-     * @throws PotatoBotException if the command word is not supported
+     * @param command command word to convert.
+     * @return command type matching the command word.
+     * @throws PotatoBotException if the command word is not supported.
      */
     public static CommandType parse(String command) throws PotatoBotException {
         for (CommandType commandType : CommandType.values()) {

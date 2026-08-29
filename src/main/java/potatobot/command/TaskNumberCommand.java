@@ -10,6 +10,11 @@ import potatobot.task.TaskList;
 public abstract class TaskNumberCommand extends Command {
     private final int taskNumber;
 
+    /**
+     * Creates a command for the task with the specified displayed number.
+     *
+     * @param taskNumber displayed number of the task to use.
+     */
     protected TaskNumberCommand(int taskNumber) {
         this.taskNumber = taskNumber;
     }
