@@ -21,7 +21,7 @@ public class Deadline extends Task {
      *
      * @param description Description of the task.
      * @param by          Deadline date in YYYY-MM-DD format.
-     * @throws PotatoBotException if the deadline date is invalid.
+     * @throws PotatoBotException If the deadline date is invalid.
      */
     public Deadline(String description, String by) throws PotatoBotException {
         super(description);
@@ -39,7 +39,7 @@ public class Deadline extends Task {
      *
      * @param date Date to parse.
      * @return Parsed date.
-     * @throws DateTimeParseException if neither supported format matches.
+     * @throws DateTimeParseException If neither supported format matches.
      */
     private static LocalDate parseDate(String date) {
         try {

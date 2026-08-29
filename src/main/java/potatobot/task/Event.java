@@ -23,7 +23,7 @@ public class Event extends Task {
      * @param description Description of the event.
      * @param from        Start date in YYYY-MM-DD format.
      * @param to          End date in YYYY-MM-DD format.
-     * @throws PotatoBotException if either date is invalid or the end date occurs
+     * @throws PotatoBotException If either date is invalid or the end date occurs
      *                            before the start date.
      */
     public Event(String description, String from, String to)
