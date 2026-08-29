@@ -30,7 +30,7 @@ public class Storage {
     /**
      * Creates a storage manager for the specified data file.
      *
-     * @param filePath path of the data file.
+     * @param filePath Path of the data file.
      */
     public Storage(String filePath) {
         this(filePath, filePath);
@@ -39,14 +39,19 @@ public class Storage {
     /**
      * Creates a storage manager with separate physical and user-visible paths.
      *
-     * @param filePath        physical path of the data file.
-     * @param displayFilePath data-file path shown to the user.
+     * @param filePath        Physical path of the data file.
+     * @param displayFilePath Data-file path shown to the user.
      */
     public Storage(String filePath, String displayFilePath) {
         this.filePath = Path.of(filePath);
         this.displayFilePath = displayFilePath;
     }
 
+    /**
+     * Returns the data-file path intended for display to the user.
+     *
+     * @return User-visible data-file path.
+     */
     public String getDisplayFilePath() {
         return displayFilePath;
     }
@@ -55,9 +60,9 @@ public class Storage {
      * Loads all tasks from the data file.
      * A missing file represents a new user with an empty task list.
      *
-     * @return tasks reconstructed from the data file.
-     * @throws IOException        if the data file cannot be read.
-     * @throws PotatoBotException if the stored task data is invalid.
+     * @return Tasks reconstructed from the data file.
+     * @throws IOException        If the data file cannot be read.
+     * @throws PotatoBotException If the stored task data is invalid.
      */
     public List<Task> load() throws IOException, PotatoBotException {
         if (Files.notExists(filePath)) {
@@ -81,8 +86,8 @@ public class Storage {
     /**
      * Saves all tasks to the data file, replacing its previous contents.
      *
-     * @param tasks tasks to save.
-     * @throws IOException if the data file cannot be written.
+     * @param tasks Tasks to save.
+     * @throws IOException If the data file cannot be written.
      */
     public void save(TaskList tasks) throws IOException {
         Path dataDirectory = filePath.getParent();
@@ -102,9 +107,9 @@ public class Storage {
     /**
      * Converts one stored line back into a task.
      *
-     * @param line line containing a saved task.
-     * @return task represented by the line.
-     * @throws PotatoBotException if the line does not use a valid storage format.
+     * @param line Line containing a saved task.
+     * @return Task represented by the line.
+     * @throws PotatoBotException If the line does not use a valid storage format.
      */
     private static Task parseSavedTask(String line) throws PotatoBotException {
         boolean isMarked;
@@ -129,9 +134,9 @@ public class Storage {
     /**
      * Reconstructs a task and its subtype-specific details from stored text.
      *
-     * @param taskDetails stored task text without its completion status.
-     * @return reconstructed task.
-     * @throws PotatoBotException if subtype-specific details are incomplete.
+     * @param taskDetails Stored task text without its completion status.
+     * @return Reconstructed task.
+     * @throws PotatoBotException If subtype-specific details are incomplete.
      */
     private static Task parseTaskDetails(String taskDetails) throws PotatoBotException {
         if (taskDetails.endsWith(TODO_SUFFIX)) {

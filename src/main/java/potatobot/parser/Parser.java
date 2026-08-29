@@ -21,11 +21,17 @@ public class Parser {
     private static final String INVALID_COMMAND_MESSAGE = "Me no gets?";
 
     /**
+     * Creates a parser for PotatoBot commands.
+     */
+    public Parser() {
+    }
+
+    /**
      * Parses one line of user input.
      *
-     * @param input user input to parse.
-     * @return structured command represented by the input.
-     * @throws PotatoBotException if the command or its arguments are invalid.
+     * @param input User input to parse.
+     * @return Structured command represented by the input.
+     * @throws PotatoBotException If the command or its arguments are invalid.
      */
     public Command parse(String input) throws PotatoBotException {
         String[] inputParts = input.split(" ", 2);
@@ -57,9 +63,9 @@ public class Parser {
     /**
      * Parses a task number used by a mark, unmark, or delete command.
      *
-     * @param argument text expected to contain a whole number.
-     * @return parsed task number.
-     * @throws PotatoBotException if the argument is not a whole number.
+     * @param argument Text expected to contain a whole number.
+     * @return Parsed task number.
+     * @throws PotatoBotException If the argument is not a whole number.
      */
     private static int parseTaskNumber(String argument) throws PotatoBotException {
         try {
@@ -73,9 +79,9 @@ public class Parser {
     /**
      * Parses the description and date of a deadline command.
      *
-     * @param argument deadline command argument.
-     * @return deadline represented by the argument.
-     * @throws PotatoBotException if the deadline details are invalid.
+     * @param argument Deadline command argument.
+     * @return Deadline represented by the argument.
+     * @throws PotatoBotException If the deadline details are invalid.
      */
     private static Deadline parseDeadline(String argument) throws PotatoBotException {
         String[] deadlineDetails = argument.split(" /by ", 2);
@@ -88,9 +94,9 @@ public class Parser {
     /**
      * Parses the description and dates of an event command.
      *
-     * @param argument event command argument.
-     * @return event represented by the argument.
-     * @throws PotatoBotException if the event details are invalid.
+     * @param argument Event command argument.
+     * @return Event represented by the argument.
+     * @throws PotatoBotException If the event details are invalid.
      */
     private static Event parseEvent(String argument) throws PotatoBotException {
         String[] eventDetails = argument.split(" /from ", 2);
