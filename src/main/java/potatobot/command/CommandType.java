@@ -10,6 +10,8 @@ public enum CommandType {
     ADD("add"),
     /** Displays the current task list. */
     LIST("list"),
+    /** Finds tasks whose descriptions contain a keyword. */
+    FIND("find"),
     /** Marks a task as completed. */
     MARK("mark"),
     /** Marks a task as incomplete. */

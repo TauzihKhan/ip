@@ -114,6 +114,29 @@ public class TaskList {
     }
 
     /**
+     * Formats tasks whose descriptions contain a keyword as a numbered list.
+     *
+     * @param keyword Keyword to find in task descriptions.
+     * @return Formatted matching tasks, or an empty-list message if none match.
+     */
+    public String find(String keyword) {
+        StringBuilder message = new StringBuilder("Here are the tasks in your list:");
+        int matchingTaskNumber = 0;
+        for (Task task : tasks) {
+            if (task.matchesKeyword(keyword)) {
+                matchingTaskNumber++;
+                message.append("\n  ")
+                        .append(matchingTaskNumber)
+                        .append(".[")
+                        .append(task.getStatusIcon())
+                        .append("] ")
+                        .append(task);
+            }
+        }
+        return matchingTaskNumber == 0 ? "Nothing to see here..." : message.toString();
+    }
+
+    /**
      * Converts the task list to the text stored in the save file.
      * Each task occupies one line and includes its completion status.
      *

@@ -1,5 +1,7 @@
 package potatobot.task;
 
+import java.util.Locale;
+
 /**
  * Represents a task and whether it has been completed.
  */
@@ -37,6 +39,19 @@ public class Task {
      */
     public String getStatusIcon() {
         return isMarked ? "X" : " ";
+    }
+
+    /**
+     * Returns whether this task's description contains the specified keyword.
+     * The comparison is case-insensitive.
+     *
+     * @param keyword Keyword to find in the description.
+     * @return {@code true} if the description contains the keyword.
+     */
+    public boolean matchesKeyword(String keyword) {
+        String normalizedDescription = description.toLowerCase(Locale.ROOT);
+        String normalizedKeyword = keyword.toLowerCase(Locale.ROOT);
+        return normalizedDescription.contains(normalizedKeyword);
     }
 
     /**

@@ -5,6 +5,7 @@ import potatobot.command.Command;
 import potatobot.command.CommandType;
 import potatobot.command.DeleteCommand;
 import potatobot.command.ExitCommand;
+import potatobot.command.FindCommand;
 import potatobot.command.ListCommand;
 import potatobot.command.MarkCommand;
 import potatobot.command.UnmarkCommand;
@@ -57,6 +58,7 @@ public class Parser {
             case DEADLINE -> new AddCommand(parseDeadline(argument));
             case EVENT -> new AddCommand(parseEvent(argument));
             case LIST, BYE -> throw new PotatoBotException(INVALID_COMMAND_MESSAGE);
+            case FIND -> new FindCommand(argument);
         };
     }
 
