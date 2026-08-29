@@ -47,6 +47,11 @@ public class Storage {
         this.displayFilePath = displayFilePath;
     }
 
+    /**
+     * Returns the data-file path intended for display to the user.
+     *
+     * @return user-visible data-file path.
+     */
     public String getDisplayFilePath() {
         return displayFilePath;
     }

@@ -24,6 +24,17 @@ public class PotatoBot {
             SAVE_FILE_NAME);
     private final Ui ui = new Ui();
 
+    /**
+     * Creates a PotatoBot with its default parser, storage, task list, and UI.
+     */
+    public PotatoBot() {
+    }
+
+    /**
+     * Starts PotatoBot.
+     *
+     * @param args command-line arguments; currently unused.
+     */
     public static void main(String[] args) {
         new PotatoBot().run();
     }
