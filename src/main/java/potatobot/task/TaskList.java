@@ -5,20 +5,36 @@ import java.util.List;
 
 import potatobot.exception.PotatoBotException;
 
-// Stores up to 100 tasks.
+/**
+ * Stores and manages a bounded list of tasks.
+ */
 public class TaskList {
     public static final int MAX_SIZE = 100;
 
     private final List<Task> itemList;
 
+    /**
+     * Creates an empty task list.
+     */
     public TaskList() {
         itemList = new ArrayList<>(MAX_SIZE);
     }
 
+    /**
+     * Returns the task at the specified zero-based index.
+     *
+     * @param index zero-based index of the task.
+     * @return task at the specified index.
+     */
     public Task get(int index) {
         return itemList.get(index);
     }
 
+    /**
+     * Returns the number of tasks in this list.
+     *
+     * @return number of stored tasks.
+     */
     public int size() {
         return itemList.size();
     }
@@ -26,7 +42,8 @@ public class TaskList {
     /**
      * Adds an item to the task list.
      *
-     * @throws PotatoBotException if the task array is already full
+     * @param item task to add.
+     * @throws PotatoBotException if the task list is already full.
      */
     public void add(Task item) throws PotatoBotException {
         if (itemList.size() >= MAX_SIZE) {
@@ -36,22 +53,48 @@ public class TaskList {
         itemList.add(item);
     }
 
+    /**
+     * Indicates whether this task list contains no tasks.
+     *
+     * @return {@code true} if this list is empty.
+     */
     public boolean isEmpty() {
         return itemList.isEmpty();
     }
 
+    /**
+     * Marks the task at the specified index as completed.
+     *
+     * @param index zero-based index of the task to mark.
+     */
     public void markDone(int index) {
         itemList.get(index).markDone();
     }
 
+    /**
+     * Marks the task at the specified index as incomplete.
+     *
+     * @param index zero-based index of the task to reset.
+     */
     public void markReset(int index) {
         itemList.get(index).markReset();
     }
 
+    /**
+     * Removes and returns the task at the specified index.
+     *
+     * @param index zero-based index of the task to remove.
+     * @return removed task.
+     */
     public Task delete(int index) {
         return itemList.remove(index);
     }
 
+    /**
+     * Formats all tasks as a numbered list for display to the user.
+     *
+     * @return formatted task list, or an empty-list message if no tasks exist.
+     */
     public String printList() {
         if (isEmpty()) {
             return "Nothing to see here...";

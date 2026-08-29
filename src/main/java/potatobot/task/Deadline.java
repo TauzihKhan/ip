@@ -49,6 +49,11 @@ public class Deadline extends Task {
         }
     }
 
+    /**
+     * Formats this task with its deadline date.
+     *
+     * @return task description and formatted deadline date.
+     */
     @Override
     public String toString() {
         return super.toString()

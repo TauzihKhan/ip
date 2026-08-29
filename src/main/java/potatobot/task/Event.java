@@ -59,6 +59,11 @@ public class Event extends Task {
         }
     }
 
+    /**
+     * Formats this task with its start and end dates.
+     *
+     * @return task description and formatted event dates.
+     */
     @Override
     public String toString() {
         return super.toString()
