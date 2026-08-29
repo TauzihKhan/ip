@@ -9,6 +9,7 @@ import org.junit.jupiter.api.Test;
 import potatobot.command.AddCommand;
 import potatobot.command.DeleteCommand;
 import potatobot.command.ExitCommand;
+import potatobot.command.FindCommand;
 import potatobot.command.ListCommand;
 import potatobot.command.MarkCommand;
 import potatobot.command.UnmarkCommand;
@@ -22,6 +23,16 @@ public class ParserTest {
             throws PotatoBotException {
         assertInstanceOf(ListCommand.class, parser.parse("list"));
         assertInstanceOf(ExitCommand.class, parser.parse("bye"));
+    }
+
+    @Test
+    public void parse_findCommand_findCommandReturned() throws PotatoBotException {
+        assertInstanceOf(FindCommand.class, parser.parse("find book"));
+    }
+
+    @Test
+    public void parse_findCommandWithoutKeyword_exceptionThrown() {
+        assertThrows(PotatoBotException.class, () -> parser.parse("find"));
     }
 
     @Test

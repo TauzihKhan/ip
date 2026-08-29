@@ -93,10 +93,34 @@ public class TaskListTest {
         tasks.markDone(1);
 
         assertEquals(
-                "Here are the tasks in your list:\n"
+                "Here are the tasks in your potato sack:\n"
                         + "  1.[ ] read book\n"
                         + "  2.[X] write code (Todo)",
                 tasks.printList());
+    }
+
+    @Test
+    public void find_keywordMatchesDescriptions_filteredTasksReturned() throws PotatoBotException {
+        TaskList tasks = new TaskList();
+        tasks.add(new Task("read book"));
+        Task completedTask = new Task("return book");
+        tasks.add(completedTask);
+        tasks.add(new Task("write code"));
+        tasks.markDone(1);
+
+        assertEquals(
+                "Here are the tasks in your potato sack:\n"
+                        + "  1.[ ] read book\n"
+                        + "  2.[X] return book",
+                tasks.find("BOOK"));
+    }
+
+    @Test
+    public void find_keywordHasNoMatches_emptyListMessageReturned() throws PotatoBotException {
+        TaskList tasks = new TaskList();
+        tasks.add(new Task("read book"));
+
+        assertEquals("Nothing to see here...", tasks.find("movie"));
     }
 
     @Test

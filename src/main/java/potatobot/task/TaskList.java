@@ -100,7 +100,7 @@ public class TaskList {
             return "Nothing to see here...";
         }
 
-        StringBuilder message = new StringBuilder("Here are the tasks in your list:");
+        StringBuilder message = new StringBuilder("Here are the tasks in your potato sack:");
         for (int i = 0; i < tasks.size(); i++) {
             Task task = tasks.get(i);
             message.append("\n  ")
@@ -111,6 +111,29 @@ public class TaskList {
                     .append(task);
         }
         return message.toString();
+    }
+
+    /**
+     * Formats tasks whose descriptions contain a keyword as a numbered list.
+     *
+     * @param keyword Keyword to find in task descriptions.
+     * @return Formatted matching tasks, or an empty-list message if none match.
+     */
+    public String find(String keyword) {
+        StringBuilder message = new StringBuilder("Here are the tasks in your potato sack:");
+        int matchingTaskNumber = 0;
+        for (Task task : tasks) {
+            if (task.matchesKeyword(keyword)) {
+                matchingTaskNumber++;
+                message.append("\n  ")
+                        .append(matchingTaskNumber)
+                        .append(".[")
+                        .append(task.getStatusIcon())
+                        .append("] ")
+                        .append(task);
+            }
+        }
+        return matchingTaskNumber == 0 ? "Nothing to see here..." : message.toString();
     }
 
     /**
