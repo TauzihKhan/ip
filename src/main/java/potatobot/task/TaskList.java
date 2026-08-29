@@ -100,7 +100,7 @@ public class TaskList {
             return "Nothing to see here...";
         }
 
-        StringBuilder message = new StringBuilder("Here are the tasks in your list:");
+        StringBuilder message = new StringBuilder("Here are the tasks in your potato sack:");
         for (int i = 0; i < tasks.size(); i++) {
             Task task = tasks.get(i);
             message.append("\n  ")
@@ -120,7 +120,7 @@ public class TaskList {
      * @return Formatted matching tasks, or an empty-list message if none match.
      */
     public String find(String keyword) {
-        StringBuilder message = new StringBuilder("Here are the tasks in your list:");
+        StringBuilder message = new StringBuilder("Here are the tasks in your potato sack:");
         int matchingTaskNumber = 0;
         for (Task task : tasks) {
             if (task.matchesKeyword(keyword)) {

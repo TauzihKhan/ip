@@ -93,7 +93,7 @@ public class TaskListTest {
         tasks.markDone(1);
 
         assertEquals(
-                "Here are the tasks in your list:\n"
+                "Here are the tasks in your potato sack:\n"
                         + "  1.[ ] read book\n"
                         + "  2.[X] write code (Todo)",
                 tasks.printList());
@@ -109,7 +109,7 @@ public class TaskListTest {
         tasks.markDone(1);
 
         assertEquals(
-                "Here are the tasks in your list:\n"
+                "Here are the tasks in your potato sack:\n"
                         + "  1.[ ] read book\n"
                         + "  2.[X] return book",
                 tasks.find("BOOK"));
