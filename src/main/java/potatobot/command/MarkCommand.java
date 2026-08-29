@@ -13,12 +13,15 @@ public class MarkCommand extends TaskNumberCommand {
      * Creates a command that completes the task with the specified displayed
      * number.
      *
-     * @param taskNumber displayed number of the task to complete.
+     * @param taskNumber Displayed number of the task to complete.
      */
     public MarkCommand(int taskNumber) {
         super(taskNumber);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void execute(TaskList tasks, Ui ui, Storage storage) throws PotatoBotException {
         int taskIndex = getTaskIndex(tasks);

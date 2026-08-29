@@ -15,12 +15,15 @@ public class AddCommand extends Command {
     /**
      * Creates a command that adds the specified task.
      *
-     * @param task task to add.
+     * @param task Task to add.
      */
     public AddCommand(Task task) {
         this.task = task;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void execute(TaskList tasks, Ui ui, Storage storage) throws PotatoBotException {
         tasks.add(task);

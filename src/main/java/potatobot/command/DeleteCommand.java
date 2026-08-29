@@ -13,12 +13,15 @@ public class DeleteCommand extends TaskNumberCommand {
     /**
      * Creates a command that deletes the task with the specified displayed number.
      *
-     * @param taskNumber displayed number of the task to delete.
+     * @param taskNumber Displayed number of the task to delete.
      */
     public DeleteCommand(int taskNumber) {
         super(taskNumber);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void execute(TaskList tasks, Ui ui, Storage storage) throws PotatoBotException {
         int taskIndex = getTaskIndex(tasks);

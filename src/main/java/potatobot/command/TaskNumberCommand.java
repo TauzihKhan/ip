@@ -10,6 +10,11 @@ import potatobot.task.TaskList;
 public abstract class TaskNumberCommand extends Command {
     private final int taskNumber;
 
+    /**
+     * Creates a command for the task with the specified displayed number.
+     *
+     * @param taskNumber Displayed number of the task to use.
+     */
     protected TaskNumberCommand(int taskNumber) {
         this.taskNumber = taskNumber;
     }
@@ -17,9 +22,9 @@ public abstract class TaskNumberCommand extends Command {
     /**
      * Validates the displayed task number and converts it to a zero-based index.
      *
-     * @param tasks task list containing the selected task.
-     * @return zero-based index of the selected task.
-     * @throws PotatoBotException if the displayed number is outside the task list.
+     * @param tasks Task list containing the selected task.
+     * @return Zero-based index of the selected task.
+     * @throws PotatoBotException If the displayed number is outside the task list.
      */
     protected int getTaskIndex(TaskList tasks) throws PotatoBotException {
         if (taskNumber <= 0) {
