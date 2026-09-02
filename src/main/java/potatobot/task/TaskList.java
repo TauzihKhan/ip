@@ -40,17 +40,19 @@ public class TaskList {
     }
 
     /**
-     * Adds an item to the task list.
+     * Adds one or more items to the task list.
      *
-     * @param item Task to add.
-     * @throws PotatoBotException If the task list is already full.
+     * @param items Tasks to add.
+     * @throws PotatoBotException If there is insufficient room for all the tasks.
      */
-    public void add(Task item) throws PotatoBotException {
-        if (tasks.size() >= MAX_SIZE) {
+    public void add(Task... items) throws PotatoBotException {
+        if (items.length > MAX_SIZE - tasks.size()) {
             throw new PotatoBotException("Your potato sack is full! It can only hold 100 items.");
         }
 
-        tasks.add(item);
+        for (Task item : items) {
+            tasks.add(item);
+        }
     }
 
     /**

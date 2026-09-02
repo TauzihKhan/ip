@@ -34,6 +34,19 @@ public class TaskListTest {
     }
 
     @Test
+    public void add_multipleTasks_allTasksStoredInOrder() throws PotatoBotException {
+        TaskList tasks = new TaskList();
+        Task firstTask = new Task("read book");
+        Task secondTask = new Todo("write code");
+
+        tasks.add(firstTask, secondTask);
+
+        assertEquals(2, tasks.size());
+        assertSame(firstTask, tasks.get(0));
+        assertSame(secondTask, tasks.get(1));
+    }
+
+    @Test
     public void add_atCapacity_exceptionThrown() throws PotatoBotException {
         TaskList tasks = new TaskList();
         for (int i = 0; i < TaskList.MAX_SIZE; i++) {
