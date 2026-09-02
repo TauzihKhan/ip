@@ -83,28 +83,19 @@ public class ParserTest {
 
     @Test
     public void parse_deadlineMissingByDelimiter_exceptionThrown() {
-        assertThrows(
-                PotatoBotException.class,
-                () -> parser.parse("deadline submit report 2026-08-31"));
+        assertThrows(PotatoBotException.class, () -> parser.parse("deadline submit report 2026-08-31"));
     }
 
     @Test
     public void parse_eventMissingDateDelimiter_exceptionThrown() {
-        assertThrows(
-                PotatoBotException.class,
-                () -> parser.parse("event conference /to 2026-09-02"));
-        assertThrows(
-                PotatoBotException.class,
-                () -> parser.parse("event conference /from 2026-08-31"));
+        assertThrows(PotatoBotException.class, () -> parser.parse("event conference /to 2026-09-02"));
+        assertThrows(PotatoBotException.class, () -> parser.parse("event conference /from 2026-08-31"));
     }
 
     @Test
     public void parse_invalidTaskDate_exceptionThrown() {
-        assertThrows(
-                PotatoBotException.class,
-                () -> parser.parse("deadline submit report /by 2026-13-31"));
-        assertThrows(
-                PotatoBotException.class,
-                () -> parser.parse("event conference /from invalid /to 2026-09-02"));
+        assertThrows(PotatoBotException.class, () -> parser.parse("deadline submit report /by 2026-13-31"));
+        assertThrows(PotatoBotException.class, () -> parser.parse(
+                "event conference /from invalid /to 2026-09-02"));
     }
 }

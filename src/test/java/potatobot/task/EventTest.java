@@ -38,9 +38,9 @@ public class EventTest {
 
     @Test
     public void constructor_endBeforeStart_exceptionThrown() {
-        PotatoBotException exception = assertThrows(
-                PotatoBotException.class,
-                () -> new Event("conference", "2026-09-02", "2026-08-31"));
+        PotatoBotException exception =
+                assertThrows(PotatoBotException.class, () -> new Event(
+                        "conference", "2026-09-02", "2026-08-31"));
 
         assertEquals(
                 "The event end date cannot be before its start date.",
@@ -49,9 +49,8 @@ public class EventTest {
 
     @Test
     public void constructor_invalidDate_exceptionThrown() {
-        PotatoBotException exception = assertThrows(
-                PotatoBotException.class,
-                () -> new Event("conference", "invalid", "2026-09-02"));
+        PotatoBotException exception =
+                assertThrows(PotatoBotException.class, () -> new Event("conference", "invalid", "2026-09-02"));
 
         assertEquals(
                 "Use the date format YYYY-MM-DD, for example 2019-12-02.",
