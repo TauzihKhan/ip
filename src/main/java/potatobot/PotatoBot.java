@@ -1,7 +1,6 @@
 package potatobot;
 
 import java.io.IOException;
-import java.util.List;
 
 import potatobot.command.Command;
 import potatobot.exception.PotatoBotException;
@@ -71,10 +70,7 @@ public class PotatoBot {
      */
     private void handleStart() {
         try {
-            List<Task> loadedTasks = storage.load();
-            for (Task savedTask : loadedTasks) {
-                tasks.add(savedTask);
-            }
+            tasks.add(storage.load().toArray(Task[]::new));
         } catch (IOException | PotatoBotException exception) {
             ui.showMessage("I couldn't load your saved tasks: " + exception.getMessage());
         }
