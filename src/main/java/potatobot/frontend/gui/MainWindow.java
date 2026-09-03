@@ -3,10 +3,12 @@ package potatobot.frontend.gui;
 import java.net.URL;
 
 import javafx.fxml.FXML;
+import javafx.scene.control.Button;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.layout.VBox;
+import potatobot.backend.CommandResult;
 import potatobot.backend.PotatoBot;
 
 /**
@@ -21,6 +23,9 @@ public class MainWindow {
 
     @FXML
     private TextField userInput;
+
+    @FXML
+    private Button sendButton;
 
     private PotatoBot potatoBot;
 
@@ -42,10 +47,16 @@ public class MainWindow {
      */
     public void setPotatoBot(PotatoBot potatoBot) {
         this.potatoBot = potatoBot;
+
+        String startupErrorMessage = potatoBot.getStartupErrorMessage();
+        if (startupErrorMessage != null) {
+            dialogContainer.getChildren().add(
+                    DialogBox.getBotDialog(startupErrorMessage, potatoBotImage));
+        }
     }
 
     /**
-     * Adds sample user and bot dialogs until command handling is connected in checkpoint 5.
+     * Sends the user's input to PotatoBot and displays both sides of the exchange.
      */
     @FXML
     private void handleUserInput() {
@@ -54,10 +65,21 @@ public class MainWindow {
             return;
         }
 
+        // Use out api to connect to backend
+        CommandResult result = potatoBot.respondTo(input);
         dialogContainer.getChildren().addAll(
                 DialogBox.getUserDialog(input, userImage),
-                DialogBox.getBotDialog("PotatoBot heard: " + input, potatoBotImage));
+                DialogBox.getBotDialog(result.message(), potatoBotImage));
         userInput.clear();
+
+        if (result.isExit()) {
+            // For now just disable any more inputs
+            userInput.setDisable(true);
+            sendButton.setDisable(true);
+        } else {
+            // Needed to stay on input box
+            userInput.requestFocus();
+        }
     }
 
     /**
