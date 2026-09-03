@@ -1,0 +1,28 @@
+.root {
+    -fx-background-color: #f4f0e6;
+}
+
+.scroll-pane,
+.scroll-pane > .viewport {
+    -fx-background-color: transparent;
+}
+
+#dialogContainer {
+    -fx-padding: 10px;
+}
+
+.text-field {
+    -fx-font-size: 16px;
+    -fx-pref-height: 41px;
+}
+
+.button {
+    -fx-font-size: 16px;
+    -fx-pref-height: 41px;
+}
+
+.user-message {
+    -fx-background-color: #d9f7be;
+    -fx-background-radius: 8px;
+    -fx-padding: 8px;
+}
