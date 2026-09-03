@@ -1,0 +1,59 @@
+package potatobot.backend.task;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+
+import org.junit.jupiter.api.Test;
+
+import potatobot.backend.exception.PotatoBotException;
+
+public class EventTest {
+    @Test
+    public void constructor_isoDates_formattedEventCreated() throws PotatoBotException {
+        Event event = new Event("conference", "2026-08-31", "2026-09-02");
+
+        assertEquals(
+                "conference (Event, from: Aug 31 2026 to: Sep 02 2026)",
+                event.toString());
+    }
+
+    @Test
+    public void constructor_storedDisplayDates_formattedEventCreated()
+            throws PotatoBotException {
+        Event event = new Event("conference", "Aug 31 2026", "Sep 02 2026");
+
+        assertEquals(
+                "conference (Event, from: Aug 31 2026 to: Sep 02 2026)",
+                event.toString());
+    }
+
+    @Test
+    public void constructor_sameStartAndEndDate_eventCreated() throws PotatoBotException {
+        Event event = new Event("conference", "2026-08-31", "2026-08-31");
+
+        assertEquals(
+                "conference (Event, from: Aug 31 2026 to: Aug 31 2026)",
+                event.toString());
+    }
+
+    @Test
+    public void constructor_endBeforeStart_exceptionThrown() {
+        PotatoBotException exception =
+                assertThrows(PotatoBotException.class, () -> new Event(
+                        "conference", "2026-09-02", "2026-08-31"));
+
+        assertEquals(
+                "The event end date cannot be before its start date.",
+                exception.getMessage());
+    }
+
+    @Test
+    public void constructor_invalidDate_exceptionThrown() {
+        PotatoBotException exception =
+                assertThrows(PotatoBotException.class, () -> new Event("conference", "invalid", "2026-09-02"));
+
+        assertEquals(
+                "Use the date format YYYY-MM-DD, for example 2019-12-02.",
+                exception.getMessage());
+    }
+}

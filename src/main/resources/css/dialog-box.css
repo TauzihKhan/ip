@@ -1,0 +1,21 @@
+.label {
+    -fx-background-color: rgba(167, 192, 128, 0.94);
+    -fx-background-radius: 12px 12px 0 12px;
+    -fx-border-color: #d3c6aa;
+    -fx-border-radius: 12px 12px 0 12px;
+    -fx-border-width: 1px;
+    -fx-font-size: 15px;
+    -fx-text-fill: #2d353b;
+}
+
+.bot-label {
+    -fx-background-color: rgba(61, 72, 77, 0.96);
+    -fx-background-radius: 12px 12px 12px 0;
+    -fx-border-color: #dbbc7f;
+    -fx-border-radius: 12px 12px 12px 0;
+    -fx-text-fill: #d3c6aa;
+}
+
+#displayPicture {
+    -fx-effect: dropshadow(gaussian, rgba(28, 34, 38, 0.75), 10, 0.35, 2, 3);
+}
