@@ -4,7 +4,6 @@ import potatobot.exception.PotatoBotException;
 import potatobot.storage.Storage;
 import potatobot.task.Task;
 import potatobot.task.TaskList;
-import potatobot.ui.Ui;
 
 /**
  * Deletes a selected task from the task list.
@@ -23,9 +22,9 @@ public class DeleteCommand extends TaskNumberCommand {
      * {@inheritDoc}
      */
     @Override
-    public void execute(TaskList tasks, Ui ui, Storage storage) throws PotatoBotException {
+    public CommandResult execute(TaskList tasks, Storage storage) throws PotatoBotException {
         int taskIndex = getTaskIndex(tasks);
         Task deletedTask = tasks.delete(taskIndex);
-        ui.showMessage("Task deleted: " + deletedTask + "\nKeep it going!");
+        return CommandResult.reply("Task deleted: " + deletedTask + "\nKeep it going!");
     }
 }

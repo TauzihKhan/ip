@@ -4,7 +4,6 @@ import potatobot.exception.PotatoBotException;
 import potatobot.storage.Storage;
 import potatobot.task.Task;
 import potatobot.task.TaskList;
-import potatobot.ui.Ui;
 
 /**
  * Adds a task to the task list.
@@ -25,8 +24,8 @@ public class AddCommand extends Command {
      * {@inheritDoc}
      */
     @Override
-    public void execute(TaskList tasks, Ui ui, Storage storage) throws PotatoBotException {
+    public CommandResult execute(TaskList tasks, Storage storage) throws PotatoBotException {
         tasks.add(task);
-        ui.showMessage("Added: " + task);
+        return CommandResult.reply("Added: " + task);
     }
 }
