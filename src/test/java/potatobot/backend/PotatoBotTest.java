@@ -60,8 +60,46 @@ public class PotatoBotTest {
 
         CommandResult result = potatoBot.respondTo("bye");
 
-        assertEquals("Tasks saved to " + saveFile, result.message());
+        assertEquals("Bye. I'm rolling back to the potato patch.", result.message());
         assertTrue(result.isExit());
+        assertEquals("[ ] read book (Todo)", Files.readString(saveFile));
+    }
+
+    @Test
+    public void shutdown_withoutBye_tasksSaved() throws IOException {
+        Path saveFile = temporaryDirectory.resolve("tasks.txt");
+        PotatoBot potatoBot = createPotatoBot(saveFile);
+        potatoBot.respondTo("todo read book");
+
+        potatoBot.shutdown();
+
+        assertEquals("[ ] read book (Todo)", Files.readString(saveFile));
+    }
+
+    @Test
+    public void shutdown_afterBye_tasksSavedOnlyOnce() throws IOException {
+        Path saveFile = temporaryDirectory.resolve("tasks.txt");
+        PotatoBot potatoBot = createPotatoBot(saveFile);
+        potatoBot.respondTo("todo read book");
+        potatoBot.respondTo("bye");
+        Files.writeString(saveFile, "external change");
+
+        potatoBot.shutdown();
+
+        assertEquals("external change", Files.readString(saveFile));
+    }
+
+    @Test
+    public void shutdown_firstSaveFails_secondCallRetries() throws IOException {
+        Path saveFile = temporaryDirectory.resolve("tasks.txt");
+        Files.createDirectory(saveFile);
+        PotatoBot potatoBot = createPotatoBot(saveFile);
+        potatoBot.respondTo("todo read book");
+
+        potatoBot.shutdown();
+        Files.delete(saveFile);
+        potatoBot.shutdown();
+
         assertEquals("[ ] read book (Todo)", Files.readString(saveFile));
     }
 

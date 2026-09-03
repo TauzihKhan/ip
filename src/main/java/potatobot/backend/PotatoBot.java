@@ -20,6 +20,7 @@ public class PotatoBot {
     private final Parser parser;
     private final Storage storage;
     private final String startupErrorMessage;
+    private boolean isShutdown;
 
     /**
      * Creates a PotatoBot with its default parser, storage, and task list.
@@ -55,9 +56,31 @@ public class PotatoBot {
     public CommandResult respondTo(String input) {
         try {
             Command command = parser.parse(input);
-            return command.execute(tasks, storage);
+            CommandResult result = command.execute(tasks, storage);
+            if (result.isExit()) {
+                shutdown();
+            }
+            return result;
         } catch (PotatoBotException exception) {
             return CommandResult.reply(exception.getMessage());
+        }
+    }
+
+    /**
+     * Saves the current task list once before the application closes.
+     * A failed save can be retried by calling this method again.
+     *
+     */
+    public void shutdown() {
+        if (isShutdown) {
+            return;
+        }
+
+        try {
+            storage.save(tasks);
+            isShutdown = true;
+        } catch (IOException exception) {
+            // Leave the application active so a later shutdown call can retry the save.
         }
     }
 

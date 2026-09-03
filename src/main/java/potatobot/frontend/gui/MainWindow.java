@@ -2,12 +2,15 @@ package potatobot.frontend.gui;
 
 import java.net.URL;
 
+import javafx.animation.PauseTransition;
+import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.layout.VBox;
+import javafx.util.Duration;
 import potatobot.backend.CommandResult;
 import potatobot.backend.PotatoBot;
 
@@ -15,6 +18,8 @@ import potatobot.backend.PotatoBot;
  * Controls the main PotatoBot chat window.
  */
 public class MainWindow {
+    private static final Duration EXIT_DELAY = Duration.seconds(1);
+
     @FXML
     private ScrollPane scrollPane;
 
@@ -65,7 +70,6 @@ public class MainWindow {
             return;
         }
 
-        // Use out api to connect to backend
         CommandResult result = potatoBot.respondTo(input);
         dialogContainer.getChildren().addAll(
                 DialogBox.getUserDialog(input, userImage),
@@ -73,13 +77,21 @@ public class MainWindow {
         userInput.clear();
 
         if (result.isExit()) {
-            // For now just disable any more inputs
             userInput.setDisable(true);
             sendButton.setDisable(true);
+            closeAfterDelay();
         } else {
-            // Needed to stay on input box
             userInput.requestFocus();
         }
+    }
+
+    /**
+     * Gives JavaFX time to display the final response before closing the application.
+     */
+    private static void closeAfterDelay() {
+        PauseTransition pause = new PauseTransition(EXIT_DELAY);
+        pause.setOnFinished(event -> Platform.exit());
+        pause.play();
     }
 
     /**

@@ -37,6 +37,7 @@ public class GuiApplication extends Application {
         stage.setMinWidth(MINIMUM_WIDTH);
         stage.setMinHeight(MINIMUM_HEIGHT);
         stage.setScene(scene);
+        stage.setOnCloseRequest(event -> potatoBot.shutdown());
         stage.show();
     }
 }
