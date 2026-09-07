@@ -140,32 +140,69 @@ public class Storage {
      */
     private static Task parseTaskDetails(String taskDetails) throws PotatoBotException {
         if (taskDetails.endsWith(TODO_SUFFIX)) {
-            String description = taskDetails.substring(0, taskDetails.length() - TODO_SUFFIX.length());
-            return new Todo(description);
+            return parseTodo(taskDetails);
         }
 
         int deadlineMarkerIndex = taskDetails.lastIndexOf(DEADLINE_MARKER);
         if (deadlineMarkerIndex >= 0 && taskDetails.endsWith(")")) {
-            String description = taskDetails.substring(0, deadlineMarkerIndex);
-            String by = taskDetails.substring(
-                    deadlineMarkerIndex + DEADLINE_MARKER.length(), taskDetails.length() - 1);
-            return new Deadline(description, by);
+            return parseDeadline(taskDetails, deadlineMarkerIndex);
         }
 
         int eventMarkerIndex = taskDetails.lastIndexOf(EVENT_MARKER);
         if (eventMarkerIndex >= 0 && taskDetails.endsWith(")")) {
-            String description = taskDetails.substring(0, eventMarkerIndex);
-            String eventTimes = taskDetails.substring(
-                    eventMarkerIndex + EVENT_MARKER.length(), taskDetails.length() - 1);
-            int toMarkerIndex = eventTimes.lastIndexOf(EVENT_TO_MARKER);
-            if (toMarkerIndex < 0) {
-                throw new PotatoBotException("Invalid event details: " + taskDetails);
-            }
-            String from = eventTimes.substring(0, toMarkerIndex);
-            String to = eventTimes.substring(toMarkerIndex + EVENT_TO_MARKER.length());
-            return new Event(description, from, to);
+            return parseEvent(taskDetails, eventMarkerIndex);
         }
 
         return new Task(taskDetails);
+    }
+
+    /**
+     * Reconstructs a todo from its stored text.
+     *
+     * @param taskDetails Stored todo text.
+     * @return Reconstructed todo.
+     */
+    private static Todo parseTodo(String taskDetails) {
+        String description = taskDetails.substring(0, taskDetails.length() - TODO_SUFFIX.length());
+        return new Todo(description);
+    }
+
+    /**
+     * Reconstructs a deadline from its stored text.
+     *
+     * @param taskDetails Stored deadline text.
+     * @param markerIndex Index at which the deadline details begin.
+     * @return Reconstructed deadline.
+     * @throws PotatoBotException If the stored date is invalid.
+     */
+    private static Deadline parseDeadline(String taskDetails, int markerIndex)
+            throws PotatoBotException {
+        String description = taskDetails.substring(0, markerIndex);
+        String by = taskDetails.substring(
+                markerIndex + DEADLINE_MARKER.length(), taskDetails.length() - 1);
+        return new Deadline(description, by);
+    }
+
+    /**
+     * Reconstructs an event from its stored text.
+     *
+     * @param taskDetails Stored event text.
+     * @param markerIndex Index at which the event details begin.
+     * @return Reconstructed event.
+     * @throws PotatoBotException If the stored dates are missing or invalid.
+     */
+    private static Event parseEvent(String taskDetails, int markerIndex)
+            throws PotatoBotException {
+        String description = taskDetails.substring(0, markerIndex);
+        String eventTimes = taskDetails.substring(
+                markerIndex + EVENT_MARKER.length(), taskDetails.length() - 1);
+        int toMarkerIndex = eventTimes.lastIndexOf(EVENT_TO_MARKER);
+        if (toMarkerIndex < 0) {
+            throw new PotatoBotException("Invalid event details: " + taskDetails);
+        }
+
+        String from = eventTimes.substring(0, toMarkerIndex);
+        String to = eventTimes.substring(toMarkerIndex + EVENT_TO_MARKER.length());
+        return new Event(description, from, to);
     }
 }
