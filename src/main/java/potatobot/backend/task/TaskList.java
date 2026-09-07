@@ -2,6 +2,8 @@ package potatobot.backend.task;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 import potatobot.backend.exception.PotatoBotException;
 
@@ -106,17 +108,10 @@ public class TaskList {
             return "Nothing to see here...";
         }
 
-        StringBuilder message = new StringBuilder("Here are the tasks in your potato sack:");
-        for (int i = 0; i < tasks.size(); i++) {
-            Task task = tasks.get(i);
-            message.append("\n  ")
-                    .append(i + 1)
-                    .append(".[")
-                    .append(task.getStatusIcon())
-                    .append("] ")
-                    .append(task);
-        }
-        return message.toString();
+        String formattedTasks = IntStream.range(0, tasks.size())
+                .mapToObj(index -> formatTask(tasks.get(index), index + 1))
+                .collect(Collectors.joining());
+        return "Here are the tasks in your potato sack:" + formattedTasks;
     }
 
     /**
@@ -126,20 +121,17 @@ public class TaskList {
      * @return Formatted matching tasks, or an empty-list message if none match.
      */
     public String find(String keyword) {
-        StringBuilder message = new StringBuilder("Here are the tasks in your potato sack:");
-        int matchingTaskNumber = 0;
-        for (Task task : tasks) {
-            if (task.matchesKeyword(keyword)) {
-                matchingTaskNumber++;
-                message.append("\n  ")
-                        .append(matchingTaskNumber)
-                        .append(".[")
-                        .append(task.getStatusIcon())
-                        .append("] ")
-                        .append(task);
-            }
+        List<Task> matchingTasks = tasks.stream()
+                .filter(task -> task.matchesKeyword(keyword))
+                .toList();
+        if (matchingTasks.isEmpty()) {
+            return "Nothing to see here...";
         }
-        return matchingTaskNumber == 0 ? "Nothing to see here..." : message.toString();
+
+        String formattedTasks = IntStream.range(0, matchingTasks.size())
+                .mapToObj(index -> formatTask(matchingTasks.get(index), index + 1))
+                .collect(Collectors.joining());
+        return "Here are the tasks in your potato sack:" + formattedTasks;
     }
 
     /**
@@ -149,16 +141,19 @@ public class TaskList {
      * @return Task list in its storage format.
      */
     public String toFileContents() {
-        StringBuilder fileContents = new StringBuilder();
-        for (Task task : tasks) {
-            if (!fileContents.isEmpty()) {
-                fileContents.append(System.lineSeparator());
-            }
-            fileContents.append("[")
-                    .append(task.getStatusIcon())
-                    .append("] ")
-                    .append(task);
-        }
-        return fileContents.toString();
+        return tasks.stream()
+                .map(task -> "[" + task.getStatusIcon() + "] " + task)
+                .collect(Collectors.joining(System.lineSeparator()));
+    }
+
+    /**
+     * Formats a task with its displayed number and completion status.
+     *
+     * @param task Task to format.
+     * @param taskNumber One-based number displayed to the user.
+     * @return Task formatted as one line in a displayed task list.
+     */
+    private static String formatTask(Task task, int taskNumber) {
+        return "\n  " + taskNumber + ".[" + task.getStatusIcon() + "] " + task;
     }
 }
