@@ -55,6 +55,10 @@ public class TaskList {
         for (Task item : items) {
             tasks.add(item);
         }
+
+        // The capacity check must preserve the bounded-list invariant after every
+        // addition.
+        assert tasks.size() <= MAX_SIZE : "Adding tasks must not exceed the list capacity";
     }
 
     /**

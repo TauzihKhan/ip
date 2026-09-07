@@ -63,6 +63,23 @@ public class TaskListTest {
     }
 
     @Test
+    public void add_batchExceedsRemainingCapacity_noTasksAdded() throws PotatoBotException {
+        // Fill the tasklist
+        TaskList tasks = new TaskList();
+        for (int i = 0; i < TaskList.MAX_SIZE - 1; i++) {
+            tasks.add(new Task("task " + i));
+        }
+
+        assertThrows(PotatoBotException.class,
+                () -> tasks.add(new Task("first extra"), new Task("second extra")));
+
+        assertEquals(TaskList.MAX_SIZE - 1, tasks.size());
+        tasks.add(new Task("last task"));
+        tasks.add();
+        assertEquals(TaskList.MAX_SIZE, tasks.size());
+    }
+
+    @Test
     public void markDone_existingTask_completionStatusUpdated() throws PotatoBotException {
         TaskList tasks = new TaskList();
         tasks.add(new Task("read book"));

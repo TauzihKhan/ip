@@ -34,6 +34,12 @@ public abstract class TaskNumberCommand extends Command {
             throw new PotatoBotException(
                     "Think again... We only got " + tasks.size() + " items in the list...");
         }
-        return taskNumber - 1;
+        int taskIndex = taskNumber - 1;
+
+        // Validation above must make the displayed-number conversion safe for list
+        // access.
+        assert taskIndex >= 0 && taskIndex < tasks.size() : "Validated task index must be within the list";
+
+        return taskIndex;
     }
 }
