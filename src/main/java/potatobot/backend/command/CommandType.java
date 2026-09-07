@@ -1,5 +1,7 @@
 package potatobot.backend.command;
 
+import java.util.Arrays;
+
 import potatobot.backend.exception.PotatoBotException;
 
 /**
@@ -46,11 +48,9 @@ public enum CommandType {
      * @throws PotatoBotException If the command word is not supported.
      */
     public static CommandType parse(String command) throws PotatoBotException {
-        for (CommandType commandType : CommandType.values()) {
-            if (commandType.commandWord.equals(command)) {
-                return commandType;
-            }
-        }
-        throw new PotatoBotException("Me no gets?");
+        return Arrays.stream(CommandType.values())
+                .filter(commandType -> commandType.commandWord.equals(command))
+                .findFirst()
+                .orElseThrow(() -> new PotatoBotException("Me no gets?"));
     }
 }
