@@ -56,6 +56,10 @@ public class PotatoBot {
     public CommandResult respondTo(String input) {
         try {
             Command command = parser.parse(input);
+
+            // A parser must either return an executable command or throw for invalid input.
+            assert command != null : "Successful parsing must produce a command";
+
             CommandResult result = command.execute(tasks, storage);
             if (result.isExit()) {
                 shutdown();

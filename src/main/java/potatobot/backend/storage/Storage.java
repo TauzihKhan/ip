@@ -114,12 +114,15 @@ public class Storage {
     private static Task parseSavedTask(String line) throws PotatoBotException {
         boolean isMarked;
         String taskDetails;
+
         if (line.startsWith("[X] ")) {
             isMarked = true;
             taskDetails = line.substring(4);
+
         } else if (line.startsWith("[ ] ")) {
             isMarked = false;
             taskDetails = line.substring(4);
+
         } else {
             throw new PotatoBotException("Invalid completion status in line: " + line);
         }
@@ -128,6 +131,10 @@ public class Storage {
         if (isMarked) {
             task.markDone();
         }
+
+        // Reconstruction must preserve the saved status for every task subtype.
+        assert task.getStatusIcon().equals(isMarked ? "X" : " ") : "Loaded task must retain its saved status";
+
         return task;
     }
 
@@ -156,7 +163,9 @@ public class Storage {
         if (eventMarkerIndex >= 0 && taskDetails.endsWith(")")) {
             String description = taskDetails.substring(0, eventMarkerIndex);
             String eventTimes = taskDetails.substring(
-                    eventMarkerIndex + EVENT_MARKER.length(), taskDetails.length() - 1);
+                    eventMarkerIndex + EVENT_MARKER.length(),
+                    taskDetails.length() - 1);
+
             int toMarkerIndex = eventTimes.lastIndexOf(EVENT_TO_MARKER);
             if (toMarkerIndex < 0) {
                 throw new PotatoBotException("Invalid event details: " + taskDetails);
