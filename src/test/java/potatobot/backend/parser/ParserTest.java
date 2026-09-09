@@ -12,6 +12,7 @@ import potatobot.backend.command.ExitCommand;
 import potatobot.backend.command.FindCommand;
 import potatobot.backend.command.ListCommand;
 import potatobot.backend.command.MarkCommand;
+import potatobot.backend.command.UndoCommand;
 import potatobot.backend.command.UnmarkCommand;
 import potatobot.backend.exception.PotatoBotException;
 
@@ -22,6 +23,7 @@ public class ParserTest {
     public void parse_commandsWithoutArguments_correspondingCommandsReturned()
             throws PotatoBotException {
         assertInstanceOf(ListCommand.class, parser.parse("list"));
+        assertInstanceOf(UndoCommand.class, parser.parse("undo"));
         assertInstanceOf(ExitCommand.class, parser.parse("bye"));
     }
 
@@ -78,6 +80,7 @@ public class ParserTest {
     @Test
     public void parse_argumentGivenToArgumentlessCommand_exceptionThrown() {
         assertThrows(PotatoBotException.class, () -> parser.parse("list now"));
+        assertThrows(PotatoBotException.class, () -> parser.parse("undo now"));
         assertThrows(PotatoBotException.class, () -> parser.parse("bye now"));
     }
 

@@ -20,6 +20,8 @@ public enum CommandType {
     UNMARK("unmark"),
     /** Deletes a task. */
     DELETE("delete"),
+    /** Reverses the most recent state-changing command. */
+    UNDO("undo"),
     /** Adds an undated todo task. */
     TODO("todo"),
     /** Adds a task with a deadline. */
