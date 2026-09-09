@@ -62,6 +62,22 @@ public class TaskList {
     }
 
     /**
+     * Adds a task at the specified zero-based index.
+     *
+     * @param index Zero-based position at which to restore the task.
+     * @param task  Task to add.
+     * @throws PotatoBotException If the task list is already full.
+     */
+    public void add(int index, Task task) throws PotatoBotException {
+        if (tasks.size() == MAX_SIZE) {
+            throw new PotatoBotException("Your potato sack is full! It can only hold 100 items.");
+        }
+        tasks.add(index, task);
+
+        assert tasks.size() <= MAX_SIZE : "Adding a task must not exceed the list capacity";
+    }
+
+    /**
      * Returns {@code true} if this task list contains no tasks.
      *
      * @return {@code true} if this list is empty.
@@ -149,7 +165,7 @@ public class TaskList {
     /**
      * Formats a task with its displayed number and completion status.
      *
-     * @param task Task to format.
+     * @param task       Task to format.
      * @param taskNumber One-based number displayed to the user.
      * @return Task formatted as one line in a displayed task list.
      */
