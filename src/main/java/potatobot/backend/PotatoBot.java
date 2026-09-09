@@ -1,8 +1,12 @@
 package potatobot.backend;
 
 import java.io.IOException;
+import java.util.ArrayDeque;
+import java.util.Deque;
 
 import potatobot.backend.command.Command;
+import potatobot.backend.command.UndoCommand;
+import potatobot.backend.command.UndoableCommand;
 import potatobot.backend.exception.PotatoBotException;
 import potatobot.backend.parser.Parser;
 import potatobot.backend.storage.Storage;
@@ -15,11 +19,13 @@ import potatobot.backend.task.TaskList;
 public class PotatoBot {
     private static final String SAVE_FILE_NAME = "./data/potatabot.txt";
     private static final String SAVE_FILE_ENVIRONMENT_VARIABLE = "POTATOBOT_SAVE_FILE";
+    private static final int MAX_UNDO_HISTORY_SIZE = 5;
 
     private final TaskList tasks;
     private final Parser parser;
     private final Storage storage;
     private final String startupErrorMessage;
+    private final Deque<UndoHistoryEntry> undoHistory = new ArrayDeque<>(MAX_UNDO_HISTORY_SIZE);
     private boolean isShutdown;
 
     /**
@@ -60,7 +66,14 @@ public class PotatoBot {
             // A parser must either return an executable command or throw for invalid input.
             assert command != null : "Successful parsing must produce a command";
 
+            if (command instanceof UndoCommand) {
+                return undoLastCommand();
+            }
+
             CommandResult result = command.execute(tasks, storage);
+            if (command instanceof UndoableCommand undoableCommand) {
+                rememberCommand(input, undoableCommand);
+            }
             if (result.isExit()) {
                 shutdown();
             }
@@ -110,6 +123,47 @@ public class PotatoBot {
         } catch (IOException | PotatoBotException exception) {
             return "I couldn't load your saved tasks: " + exception.getMessage();
         }
+    }
+
+    /**
+     * Stores a successfully executed command, discarding the oldest entry when
+     * the five-command limit is reached.
+     *
+     * @param input   Original user input that describes the command.
+     * @param command Command that can reverse its task-list change.
+     */
+    private void rememberCommand(String input, UndoableCommand command) {
+        if (undoHistory.size() == MAX_UNDO_HISTORY_SIZE) {
+            undoHistory.removeFirst();
+        }
+        undoHistory.addLast(new UndoHistoryEntry(input, command));
+    }
+
+    /**
+     * Reverses and removes the newest command in the session history.
+     *
+     * @return Result describing the reversed command or the empty history.
+     * @throws PotatoBotException If the command's inverse cannot be completed.
+     */
+    private CommandResult undoLastCommand() throws PotatoBotException {
+        if (undoHistory.isEmpty()) {
+            return CommandResult.reply(UndoCommand.EMPTY_HISTORY_MESSAGE);
+        }
+
+        UndoHistoryEntry historyEntry = undoHistory.getLast();
+        historyEntry.command().undo(tasks);
+        undoHistory.removeLast();
+        return CommandResult.reply(UndoCommand.formatSuccessMessage(historyEntry.input()));
+    }
+
+    /**
+     * Associates the original command input with the inverse operation needed
+     * to undo it.
+     *
+     * @param input   Original command input.
+     * @param command Reversible command that was executed.
+     */
+    private record UndoHistoryEntry(String input, UndoableCommand command) {
     }
 
 }
