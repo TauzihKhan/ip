@@ -7,7 +7,7 @@ The runner requires Java 25, builds before testing, compares each PotatoBot repl
 ```json
 {
   "build_command": ["./gradlew", "test"],
-  "run_command": ["java", "-cp", "build/classes/java/main", "potatobot.PotatoBot"],
+  "run_command": ["java", "-cp", "build/classes/java/main", "potatobot.frontend.cli.CliLauncher"],
   "test_cases": [
     {
       "id": "UI-001",
@@ -31,7 +31,7 @@ The runner requires Java 25, builds before testing, compares each PotatoBot repl
         },
         {
           "input": "list",
-          "expected_output": "PotatoBot:\n  Here are the tasks in your list:\n    1.[X] read book (Todo)\n    2.[ ] return book (Deadline, by: Dec 02 2019)\n    3.[ ] project meeting (Event, from: Dec 02 2019 to: Dec 03 2019)"
+          "expected_output": "PotatoBot:\n  Here are the tasks in your potato sack:\n    1.[X] read book (Todo)\n    2.[ ] return book (Deadline, by: Dec 02 2019)\n    3.[ ] project meeting (Event, from: Dec 02 2019 to: Dec 03 2019)"
         }
       ]
     },
@@ -49,7 +49,7 @@ The runner requires Java 25, builds before testing, compares each PotatoBot repl
         },
         {
           "input": "list",
-          "expected_output": "PotatoBot:\n  Here are the tasks in your list:\n    1.[ ] buy potatoes"
+          "expected_output": "PotatoBot:\n  Here are the tasks in your potato sack:\n    1.[ ] buy potatoes"
         }
       ]
     },
@@ -71,7 +71,7 @@ The runner requires Java 25, builds before testing, compares each PotatoBot repl
         },
         {
           "input": "list",
-          "expected_output": "PotatoBot:\n  Here are the tasks in your list:\n    1.[ ] read book (Todo)"
+          "expected_output": "PotatoBot:\n  Here are the tasks in your potato sack:\n    1.[ ] read book (Todo)"
         }
       ]
     },
@@ -85,7 +85,7 @@ The runner requires Java 25, builds before testing, compares each PotatoBot repl
         },
         {
           "input": "bye",
-          "expected_output": "PotatoBot:\n  Tasks saved to ./data/potatabot.txt\n\n================================================================================\nBye. I'm rolling back to the potato patch. Hope to see you again soon!\n================================================================================"
+          "expected_output": "PotatoBot:\n  Bye. I'm rolling back to the potato patch.\n\n================================================================================\nBye. I'm rolling back to the potato patch. Hope to see you again soon!\n================================================================================"
         }
       ]
     },
@@ -96,7 +96,7 @@ The runner requires Java 25, builds before testing, compares each PotatoBot repl
       "steps": [
         {
           "input": "list",
-          "expected_output": "PotatoBot:\n  Here are the tasks in your list:\n    1.[X] read book (Todo)\n    2.[ ] return book (Deadline, by: Dec 02 2019)\n    3.[ ] project meeting (Event, from: Dec 02 2019 to: Dec 03 2019)"
+          "expected_output": "PotatoBot:\n  Here are the tasks in your potato sack:\n    1.[X] read book (Todo)\n    2.[ ] return book (Deadline, by: Dec 02 2019)\n    3.[ ] project meeting (Event, from: Dec 02 2019 to: Dec 03 2019)"
         }
       ]
     },
@@ -121,6 +121,60 @@ The runner requires Java 25, builds before testing, compares each PotatoBot repl
         {
           "input": "deadline return book /by 2019-13-02",
           "expected_output": "PotatoBot:\n  Use the date format YYYY-MM-DD, for example 2019-12-02."
+        }
+      ]
+    },
+    {
+      "id": "UI-008",
+      "aim": "Undo five state-changing commands in reverse order and reject a sixth undo.",
+      "steps": [
+        {
+          "input": "add first task",
+          "expected_output": "PotatoBot:\n  Added: first task"
+        },
+        {
+          "input": "todo second task",
+          "expected_output": "PotatoBot:\n  Added: second task (Todo)"
+        },
+        {
+          "input": "mark 1",
+          "expected_output": "PotatoBot:\n  Task completed: first task\n  Keep going!"
+        },
+        {
+          "input": "unmark 1",
+          "expected_output": "PotatoBot:\n  Task Reset: first task\n  Keep going!"
+        },
+        {
+          "input": "delete 2",
+          "expected_output": "PotatoBot:\n  Task deleted: second task (Todo)\n  Keep it going!"
+        },
+        {
+          "input": "undo",
+          "expected_output": "PotatoBot:\n  PototaBot has travelled back in time: delete 2 undone"
+        },
+        {
+          "input": "undo",
+          "expected_output": "PotatoBot:\n  PototaBot has travelled back in time: unmark 1 undone"
+        },
+        {
+          "input": "undo",
+          "expected_output": "PotatoBot:\n  PototaBot has travelled back in time: mark 1 undone"
+        },
+        {
+          "input": "undo",
+          "expected_output": "PotatoBot:\n  PototaBot has travelled back in time: todo second task undone"
+        },
+        {
+          "input": "undo",
+          "expected_output": "PotatoBot:\n  PototaBot has travelled back in time: add first task undone"
+        },
+        {
+          "input": "undo",
+          "expected_output": "PotatoBot:\n  PotatoBot can't travel THAT far back in time sorry :("
+        },
+        {
+          "input": "list",
+          "expected_output": "PotatoBot:\n  Nothing to see here..."
         }
       ]
     }
