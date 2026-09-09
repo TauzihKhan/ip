@@ -8,7 +8,9 @@ import potatobot.backend.task.TaskList;
 /**
  * Marks a selected task as completed.
  */
-public class MarkCommand extends TaskNumberCommand {
+public class MarkCommand extends TaskNumberCommand implements UndoableCommand {
+    private int markedTaskIndex = -1;
+
     /**
      * Creates a command that completes the task with the specified displayed
      * number.
@@ -24,8 +26,17 @@ public class MarkCommand extends TaskNumberCommand {
      */
     @Override
     public CommandResult execute(TaskList tasks, Storage storage) throws PotatoBotException {
-        int taskIndex = getTaskIndex(tasks);
-        tasks.markDone(taskIndex);
-        return CommandResult.reply("Task completed: " + tasks.get(taskIndex) + "\nKeep going!");
+        markedTaskIndex = getTaskIndex(tasks);
+        tasks.markDone(markedTaskIndex);
+        return CommandResult.reply("Task completed: " + tasks.get(markedTaskIndex) + "\nKeep going!");
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void undo(TaskList tasks) {
+        assert markedTaskIndex >= 0 : "The mark command must execute before it is undone";
+        tasks.markReset(markedTaskIndex);
     }
 }

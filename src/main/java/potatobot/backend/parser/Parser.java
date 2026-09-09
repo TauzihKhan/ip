@@ -8,6 +8,7 @@ import potatobot.backend.command.ExitCommand;
 import potatobot.backend.command.FindCommand;
 import potatobot.backend.command.ListCommand;
 import potatobot.backend.command.MarkCommand;
+import potatobot.backend.command.UndoCommand;
 import potatobot.backend.command.UnmarkCommand;
 import potatobot.backend.exception.PotatoBotException;
 import potatobot.backend.task.Deadline;
@@ -39,13 +40,12 @@ public class Parser {
         CommandType commandType = CommandType.parse(inputParts[0]);
 
         if (inputParts.length == 1) {
-            if (commandType == CommandType.LIST) {
-                return new ListCommand();
-            }
-            if (commandType == CommandType.BYE) {
-                return new ExitCommand();
-            }
-            throw new PotatoBotException(INVALID_COMMAND_MESSAGE);
+            return switch (commandType) {
+                case LIST -> new ListCommand();
+                case UNDO -> new UndoCommand();
+                case BYE -> new ExitCommand();
+                default -> throw new PotatoBotException(INVALID_COMMAND_MESSAGE);
+            };
         }
 
         String argument = inputParts[1];
@@ -57,7 +57,7 @@ public class Parser {
             case TODO -> new AddCommand(new Todo(argument));
             case DEADLINE -> new AddCommand(parseDeadline(argument));
             case EVENT -> new AddCommand(parseEvent(argument));
-            case LIST, BYE -> throw new PotatoBotException(INVALID_COMMAND_MESSAGE);
+            case LIST, UNDO, BYE -> throw new PotatoBotException(INVALID_COMMAND_MESSAGE);
             case FIND -> new FindCommand(argument);
         };
     }

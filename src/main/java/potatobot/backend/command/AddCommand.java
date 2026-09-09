@@ -9,8 +9,9 @@ import potatobot.backend.task.TaskList;
 /**
  * Adds a task to the task list.
  */
-public class AddCommand extends Command {
+public class AddCommand extends Command implements UndoableCommand {
     private final Task task;
+    private int addedTaskIndex = -1;
 
     /**
      * Creates a command that adds the specified task.
@@ -26,7 +27,18 @@ public class AddCommand extends Command {
      */
     @Override
     public CommandResult execute(TaskList tasks, Storage storage) throws PotatoBotException {
+        addedTaskIndex = tasks.size();
         tasks.add(task);
         return CommandResult.reply("Added: " + task);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void undo(TaskList tasks) {
+        assert addedTaskIndex >= 0 : "The add command must execute before it is undone";
+        Task removedTask = tasks.delete(addedTaskIndex);
+        assert removedTask == task : "Undoing an add command must remove the task it added";
     }
 }
