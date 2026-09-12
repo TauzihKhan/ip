@@ -1,7 +1,7 @@
 package potatobot;
 
 import javafx.application.Application;
-import potatobot.frontend.gui.GuiApplication;
+import potatobot.ui.gui.GuiApplication;
 
 /**
  * Launches JavaFX without extending {@link Application}, avoiding classpath launcher issues.
