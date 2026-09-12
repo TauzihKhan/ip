@@ -8,7 +8,7 @@
 
 <AnchorPane prefHeight="600.0" prefWidth="400.0" stylesheets="@../css/main.css"
             xmlns="http://javafx.com/javafx/17.0.7" xmlns:fx="http://javafx.com/fxml/1"
-            fx:controller="potatobot.frontend.gui.MainWindow">
+            fx:controller="potatobot.ui.gui.MainWindow">
     <children>
         <ScrollPane fx:id="scrollPane" fitToWidth="true" hbarPolicy="NEVER"
                     AnchorPane.bottomAnchor="43.0" AnchorPane.leftAnchor="0.0"
