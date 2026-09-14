@@ -2,6 +2,7 @@ plugins {
     id 'java'
     id 'application'
     id 'checkstyle'
+    id 'jacoco'
     id 'com.gradleup.shadow' version '9.5.1'
 }
 
@@ -16,6 +17,23 @@ repositories {
 
 checkstyle {
     toolVersion = '11.0.0'
+}
+
+jacoco {
+    toolVersion = '0.8.14'
+}
+
+jacocoTestReport {
+    dependsOn test
+    executionData(fileTree(layout.buildDirectory.dir('jacoco')) { include '**/*.exec' })
+    reports {
+        html.required = true
+        xml.required = true
+    }
+    // GUI rendering and the JavaFX entry point require interactive testing.
+    classDirectories.setFrom(sourceSets.main.output.asFileTree.matching {
+        exclude 'potatobot/ui/gui/**', 'potatobot/Launcher.class'
+    })
 }
 
 dependencies {
@@ -43,6 +61,11 @@ dependencies {
 
 test {
     useJUnitPlatform()
+    systemProperty 'cli.coverageDirectory', layout.buildDirectory.dir('jacoco/cli').get().asFile.absolutePath
+    doFirst {
+        // Each run collects fresh coverage from the isolated console JVMs.
+        delete layout.buildDirectory.dir('jacoco/cli')
+    }
 
     testLogging {
         events 'passed', 'skipped', 'failed'
