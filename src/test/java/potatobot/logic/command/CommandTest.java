@@ -27,7 +27,7 @@ public class CommandTest {
         tasks.add(task);
         for (int number : new int[] { Integer.MIN_VALUE, -1, 0, 2, Integer.MAX_VALUE }) {
             for (Command command : new Command[] {
-                    new MarkCommand(number), new UnmarkCommand(number), new DeleteCommand(number)
+                new MarkCommand(number), new UnmarkCommand(number), new DeleteCommand(number)
             }) {
                 PotatoBotException exception = assertThrows(PotatoBotException.class,
                         () -> command.execute(tasks, unusedStorage));
@@ -90,7 +90,7 @@ public class CommandTest {
     @Test
     public void undo_beforeExecution_rejectsInvalidLifecycle() {
         for (UndoableCommand command : new UndoableCommand[] {
-                new AddCommand(new Task("task")), new DeleteCommand(1), new MarkCommand(1), new UnmarkCommand(1)
+            new AddCommand(new Task("task")), new DeleteCommand(1), new MarkCommand(1), new UnmarkCommand(1)
         }) {
             assertThrows(AssertionError.class, () -> command.undo(new TaskList()));
         }
