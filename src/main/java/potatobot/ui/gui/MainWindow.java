@@ -19,6 +19,13 @@ import potatobot.logic.PotatoBot;
  */
 public class MainWindow {
     private static final Duration EXIT_DELAY = Duration.seconds(1);
+    /**
+     * Welcome text matching the console greeting, displayed beside PotatoBot's
+     * avatar.
+     */
+    private static final String GREETING = "Hello! I'm PotatoBot, your trusty spud assistant.\n"
+            + "What tasks do you want me to store for you? "
+            + "(Say \"bye\" if you want me to leave you alone)";
 
     @FXML
     private ScrollPane scrollPane;
@@ -39,11 +46,12 @@ public class MainWindow {
     private final Image potatoBotImage = loadImage("/potato-trans-background.png");
 
     /**
-     * Enables smooth scrolling without locking the conversation to the bottom.
+     * Enables smooth scrolling and greets the user when the chat window opens.
      */
     @FXML
     public void initialize() {
         smoothScroll = new SmoothScroll(scrollPane);
+        dialogContainer.getChildren().add(DialogBox.getBotDialog(GREETING, potatoBotImage, false));
     }
 
     /**
