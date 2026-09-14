@@ -2,6 +2,7 @@ package potatobot.logic;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.IOException;
@@ -11,13 +12,85 @@ import java.nio.file.Path;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
+import potatobot.exception.PotatoBotException;
 import potatobot.logic.parser.Parser;
+import potatobot.model.task.Task;
 import potatobot.model.task.TaskList;
 import potatobot.storage.Storage;
 
 public class PotatoBotTest {
     @TempDir
     private Path temporaryDirectory;
+
+    @Test
+    public void constructor_missingSaveFile_startsEmptyWithoutError() {
+        PotatoBot potatoBot = createPotatoBot(temporaryDirectory.resolve("missing.txt"));
+        assertNull(potatoBot.getStartupErrorMessage());
+        assertEquals("Nothing to see here...", potatoBot.respondTo("list").message());
+    }
+
+    @Test
+    public void constructor_corruptSaveFile_reportsFailureWithoutPartialLoad() throws IOException {
+        Path saveFile = temporaryDirectory.resolve("corrupt.txt");
+        Files.writeString(saveFile, "[ ] valid\n[?] invalid");
+        PotatoBot potatoBot = createPotatoBot(saveFile);
+        assertEquals("I couldn't load your saved tasks: Invalid completion status in line: [?] invalid",
+                potatoBot.getStartupErrorMessage());
+        assertEquals("Nothing to see here...", potatoBot.respondTo("list").message());
+        assertFalse(potatoBot.respondTo("todo recovery").isError());
+    }
+
+    @Test
+    public void constructor_unreadableSavePath_reportsStartupError() {
+        PotatoBot potatoBot = createPotatoBot(temporaryDirectory);
+        assertTrue(potatoBot.getStartupErrorMessage().startsWith("I couldn't load your saved tasks: "));
+        assertEquals("Nothing to see here...", potatoBot.respondTo("list").message());
+    }
+
+    @Test
+    public void respondTo_failedAddAtCapacity_preservesUndoHistory() throws PotatoBotException {
+        TaskList tasks = new TaskList();
+        for (int i = 0; i < TaskList.MAX_SIZE - 1; i++) {
+            tasks.add(new Task("existing " + i));
+        }
+        PotatoBot potatoBot = new PotatoBot(new Parser(), tasks,
+                new Storage(temporaryDirectory.resolve("missing.txt").toString()));
+        assertFalse(potatoBot.respondTo("add last").isError());
+        assertTrue(potatoBot.respondTo("add overflow").isError());
+        assertFalse(potatoBot.respondTo("find existing").isError());
+        assertEquals("PototaBot has travelled back in time: add last undone", potatoBot.respondTo("undo").message());
+        assertEquals(TaskList.MAX_SIZE - 1, tasks.size());
+    }
+
+    @Test
+    public void respondTo_failedUndo_keepsHistoryForRetry() throws PotatoBotException {
+        TaskList tasks = new TaskList();
+        tasks.add(new Task("original"));
+        PotatoBot potatoBot = new PotatoBot(new Parser(), tasks,
+                new Storage(temporaryDirectory.resolve("missing.txt").toString()));
+        potatoBot.respondTo("delete 1");
+        // Fill through the collaborator so the pending delete remains the newest
+        // history entry.
+        for (int i = 0; i < TaskList.MAX_SIZE; i++) {
+            tasks.add(new Task("external " + i));
+        }
+        assertTrue(potatoBot.respondTo("undo").isError());
+        tasks.delete(tasks.size() - 1);
+        assertFalse(potatoBot.respondTo("undo").isError());
+        assertEquals("original", tasks.get(0).toString());
+        assertEquals(TaskList.MAX_SIZE, tasks.size());
+        assertTrue(potatoBot.respondTo("undo").isError());
+    }
+
+    @Test
+    public void respondTo_restartedSession_doesNotRestoreUndoHistory() throws IOException {
+        Path saveFile = temporaryDirectory.resolve("restart.txt");
+        Files.writeString(saveFile, "[X] saved task (Todo)");
+        PotatoBot potatoBot = createPotatoBot(saveFile);
+        assertTrue(potatoBot.respondTo("undo").isError());
+        assertEquals("Here are the tasks in your potato sack:\n  1.[X] saved task (Todo)",
+                potatoBot.respondTo("list").message());
+    }
 
     @Test
     public void respondTo_addThenList_stateRetainedAcrossCommands() {
