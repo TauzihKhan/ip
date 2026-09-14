@@ -7,7 +7,7 @@ The runner requires Java 25, builds before testing, compares each PotatoBot repl
 ```json
 {
   "build_command": ["./gradlew", "test"],
-  "run_command": ["java", "-cp", "build/classes/java/main", "potatobot.frontend.cli.CliLauncher"],
+  "run_command": ["java", "-cp", "build/classes/java/main", "potatobot.ui.cli.CliLauncher"],
   "test_cases": [
     {
       "id": "UI-001",

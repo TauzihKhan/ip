@@ -12,6 +12,70 @@ import potatobot.exception.PotatoBotException;
 
 public class TaskListTest {
     @Test
+    public void add_indexedInsertion_preservesOrderAtEveryPosition() throws PotatoBotException {
+        TaskList tasks = new TaskList();
+        tasks.add(0, new Task("last"));
+        tasks.add(0, new Task("first"));
+        tasks.add(1, new Task("middle"));
+        tasks.add(tasks.size(), new Task("end"));
+        assertEquals("[ ] first" + System.lineSeparator() + "[ ] middle" + System.lineSeparator()
+                + "[ ] last" + System.lineSeparator() + "[ ] end", tasks.toFileContents());
+    }
+
+    @Test
+    public void add_indexedInsertionAtCapacity_rejectsWithoutMutation() throws PotatoBotException {
+        TaskList tasks = new TaskList();
+        for (int i = 0; i < TaskList.MAX_SIZE; i++) {
+            tasks.add(new Task("task " + i));
+        }
+        String original = tasks.toFileContents();
+        assertEquals("Your potato sack is full! It can only hold 100 items.",
+                assertThrows(PotatoBotException.class, () -> tasks.add(0, new Task("extra"))).getMessage());
+        assertEquals(original, tasks.toFileContents());
+    }
+
+    @Test
+    public void access_invalidIndices_rejectsWithoutMutation() throws PotatoBotException {
+        TaskList tasks = new TaskList();
+        Task task = new Task("original");
+        tasks.add(task);
+        for (int index : new int[] { -1, 1 }) {
+            assertThrows(IndexOutOfBoundsException.class, () -> tasks.get(index));
+            assertThrows(IndexOutOfBoundsException.class, () -> tasks.delete(index));
+            assertThrows(IndexOutOfBoundsException.class, () -> tasks.markDone(index));
+            assertThrows(IndexOutOfBoundsException.class, () -> tasks.markReset(index));
+        }
+        assertThrows(IndexOutOfBoundsException.class, () -> tasks.add(-1, new Task("invalid")));
+        assertThrows(IndexOutOfBoundsException.class, () -> tasks.add(2, new Task("invalid")));
+        assertSame(task, tasks.get(0));
+        assertEquals(1, tasks.size());
+        assertEquals(" ", task.getStatusIcon());
+    }
+
+    @Test
+    public void find_nonconsecutiveMatches_renumbersWithoutChangingOriginalList() throws PotatoBotException {
+        TaskList tasks = new TaskList();
+        tasks.add(new Task("skip"), new Task("book one"), new Task("skip again"), new Task("book two"));
+        tasks.markDone(3);
+        String original = tasks.toFileContents();
+        assertEquals("Here are the tasks in your potato sack:\n  1.[ ] book one\n  2.[X] book two", tasks.find("book"));
+        assertEquals(original, tasks.toFileContents());
+        assertEquals(tasks.printList(), tasks.find(""));
+        assertEquals("Nothing to see here...", new TaskList().find("book"));
+    }
+
+    @Test
+    public void delete_onlyTask_restoresEmptyState() throws PotatoBotException {
+        TaskList tasks = new TaskList();
+        Task task = new Task("only");
+        tasks.add(task);
+        assertSame(task, tasks.delete(0));
+        assertTrue(tasks.isEmpty());
+        assertEquals("", tasks.toFileContents());
+        assertEquals("Nothing to see here...", tasks.printList());
+    }
+
+    @Test
     public void constructor_newTaskList_emptyStateCreated() {
         TaskList tasks = new TaskList();
 
