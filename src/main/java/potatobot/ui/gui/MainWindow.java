@@ -57,7 +57,7 @@ public class MainWindow {
         String startupErrorMessage = potatoBot.getStartupErrorMessage();
         if (startupErrorMessage != null) {
             dialogContainer.getChildren().add(
-                    DialogBox.getBotDialog(startupErrorMessage, potatoBotImage));
+                    DialogBox.getBotDialog(startupErrorMessage, potatoBotImage, true));
             scrollToLatestMessage();
         }
     }
@@ -75,7 +75,7 @@ public class MainWindow {
         CommandResult result = potatoBot.respondTo(input);
         dialogContainer.getChildren().addAll(
                 DialogBox.getUserDialog(input, userImage),
-                DialogBox.getBotDialog(result.message(), potatoBotImage));
+                DialogBox.getBotDialog(result.message(), potatoBotImage, result.isError()));
         userInput.clear();
         scrollToLatestMessage();
 
