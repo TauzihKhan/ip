@@ -28,8 +28,10 @@ public class PotatoBotTest {
 
         assertEquals("Added: read book (Todo)", addResult.message());
         assertFalse(addResult.isExit());
+        assertFalse(addResult.isError());
         assertTrue(listResult.message().contains("1.[ ] read book (Todo)"));
         assertFalse(listResult.isExit());
+        assertFalse(listResult.isError());
     }
 
     @Test
@@ -40,6 +42,25 @@ public class PotatoBotTest {
 
         assertEquals("Me no gets?", result.message());
         assertFalse(result.isExit());
+        assertTrue(result.isError());
+    }
+
+    @Test
+    public void respondTo_invalidArgumentsAndTaskNumber_errorResultsReturned() {
+        PotatoBot potatoBot = createPotatoBot(temporaryDirectory.resolve("tasks.txt"));
+
+        assertTrue(potatoBot.respondTo("todo").isError());
+        assertTrue(potatoBot.respondTo("deadline homework /by not-a-date").isError());
+        assertTrue(potatoBot.respondTo("delete 1").isError());
+        assertFalse(potatoBot.respondTo("list").isError());
+    }
+
+    @Test
+    public void respondTo_taskContainsErrorText_successResultReturned() {
+        PotatoBot potatoBot = createPotatoBot(temporaryDirectory.resolve("tasks.txt"));
+
+        assertFalse(potatoBot.respondTo("todo Me no gets?").isError());
+        assertFalse(potatoBot.respondTo("list").isError());
     }
 
     @Test
@@ -50,6 +71,7 @@ public class PotatoBotTest {
 
         assertEquals("PotatoBot can't travel THAT far back in time sorry :(", result.message());
         assertFalse(result.isExit());
+        assertTrue(result.isError());
     }
 
     @Test
@@ -156,6 +178,7 @@ public class PotatoBotTest {
 
         assertEquals("Bye. I'm rolling back to the potato patch.", result.message());
         assertTrue(result.isExit());
+        assertFalse(result.isError());
         assertEquals("[ ] read book (Todo)", Files.readString(saveFile));
     }
 

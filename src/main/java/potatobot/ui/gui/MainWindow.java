@@ -33,16 +33,17 @@ public class MainWindow {
     private Button sendButton;
 
     private PotatoBot potatoBot;
+    private SmoothScroll smoothScroll;
 
     private final Image userImage = loadImage("/userPic.jpg");
-    private final Image potatoBotImage = loadImage("/potatobotPic.jpeg");
+    private final Image potatoBotImage = loadImage("/potato-trans-background.png");
 
     /**
-     * Keeps the conversation scrolled to its newest content.
+     * Enables smooth scrolling without locking the conversation to the bottom.
      */
     @FXML
     public void initialize() {
-        scrollPane.vvalueProperty().bind(dialogContainer.heightProperty());
+        smoothScroll = new SmoothScroll(scrollPane);
     }
 
     /**
@@ -56,7 +57,8 @@ public class MainWindow {
         String startupErrorMessage = potatoBot.getStartupErrorMessage();
         if (startupErrorMessage != null) {
             dialogContainer.getChildren().add(
-                    DialogBox.getBotDialog(startupErrorMessage, potatoBotImage));
+                    DialogBox.getBotDialog(startupErrorMessage, potatoBotImage, true));
+            scrollToLatestMessage();
         }
     }
 
@@ -73,8 +75,9 @@ public class MainWindow {
         CommandResult result = potatoBot.respondTo(input);
         dialogContainer.getChildren().addAll(
                 DialogBox.getUserDialog(input, userImage),
-                DialogBox.getBotDialog(result.message(), potatoBotImage));
+                DialogBox.getBotDialog(result.message(), potatoBotImage, result.isError()));
         userInput.clear();
+        scrollToLatestMessage();
 
         if (result.isExit()) {
             userInput.setDisable(true);
@@ -86,7 +89,20 @@ public class MainWindow {
     }
 
     /**
-     * Gives JavaFX time to display the final response before closing the application.
+     * Waits for the new dialogs to be laid out before revealing the latest reply.
+     */
+    private void scrollToLatestMessage() {
+        Platform.runLater(() -> {
+            scrollPane.applyCss();
+            scrollPane.layout();
+            smoothScroll.stop();
+            scrollPane.setVvalue(scrollPane.getVmax());
+        });
+    }
+
+    /**
+     * Gives JavaFX time to display the final response before closing the
+     * application.
      */
     private static void closeAfterDelay() {
         PauseTransition pause = new PauseTransition(EXIT_DELAY);
