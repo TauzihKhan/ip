@@ -38,6 +38,6 @@ public class UndoCommand extends Command {
      */
     @Override
     public CommandResult execute(TaskList tasks, Storage storage) {
-        return CommandResult.reply(EMPTY_HISTORY_MESSAGE);
+        return CommandResult.error(EMPTY_HISTORY_MESSAGE);
     }
 }
