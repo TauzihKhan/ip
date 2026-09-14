@@ -9,6 +9,12 @@ import potatobot.exception.PotatoBotException;
 
 public class DeadlineTest {
     @Test
+    public void constructor_leapDay_acceptsOnlyLeapYears() throws PotatoBotException {
+        assertEquals("report (Deadline, by: Feb 29 2024)", new Deadline("report", "2024-02-29").toString());
+        assertThrows(PotatoBotException.class, () -> new Deadline("report", "2025-02-29"));
+    }
+
+    @Test
     public void constructor_isoDate_formattedDeadlineCreated() throws PotatoBotException {
         Deadline deadline = new Deadline("submit report", "2026-08-31");
 
