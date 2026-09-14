@@ -85,11 +85,15 @@ public class DialogBox extends HBox {
      *
      * @param text  PotatoBot's reply.
      * @param image PotatoBot's display picture.
+     * @param isError Whether the reply describes a failure and needs error styling.
      * @return Dialog box for PotatoBot's reply.
      */
-    public static DialogBox getBotDialog(String text, Image image) {
+    public static DialogBox getBotDialog(String text, Image image, boolean isError) {
         DialogBox dialogBox = new DialogBox(text, image);
         dialogBox.flip();
+        if (isError) {
+            dialogBox.dialog.getStyleClass().add("error-label");
+        }
         return dialogBox;
     }
 
