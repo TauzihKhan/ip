@@ -36,7 +36,7 @@ public class MainWindow {
     private SmoothScroll smoothScroll;
 
     private final Image userImage = loadImage("/userPic.jpg");
-    private final Image potatoBotImage = loadImage("/potatobotPic.jpeg");
+    private final Image potatoBotImage = loadImage("/potato-trans-background.png");
 
     /**
      * Enables smooth scrolling without locking the conversation to the bottom.
