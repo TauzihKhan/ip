@@ -5,7 +5,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import org.junit.jupiter.api.Test;
 
 /**
- * Checks scroll distance, accumulated motion and boundaries without requiring a display server.
+ * Checks scroll distance, accumulated motion and boundaries without requiring a
+ * display server.
  */
 public class SmoothScrollTest {
     @Test

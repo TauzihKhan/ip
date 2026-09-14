@@ -13,6 +13,8 @@ public class CommandTypeTest {
             throws PotatoBotException {
         assertEquals(CommandType.ADD, CommandType.parse("add"));
         assertEquals(CommandType.LIST, CommandType.parse("list"));
+        assertEquals(CommandType.FIND, CommandType.parse("find"));
+        assertEquals(CommandType.UNDO, CommandType.parse("undo"));
         assertEquals(CommandType.MARK, CommandType.parse("mark"));
         assertEquals(CommandType.UNMARK, CommandType.parse("unmark"));
         assertEquals(CommandType.DELETE, CommandType.parse("delete"));
