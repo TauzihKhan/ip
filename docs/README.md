@@ -11,24 +11,45 @@ PotatoBot is your trusty spud assistant for keeping track of tasks, deadlines, a
 <details>
 <summary>See PotatoBot in action</summary>
 
-![PotatoBot showing task creation, completion, undo, search, and an error reply](Ui.png)
+<img src="Ui.png" alt="PotatoBot showing task creation, completion, undo, search, and an error reply" width="540">
 
 </details>
 
 ## Quick start
 
 1. Install **Java 25**. Run `java -version` in a terminal to check your version.
-1. Place `potatobot.jar` in a folder where you want to keep your tasks. Building from source? Follow the [JAR build instructions](../README.md#building-and-running-the-fat-jar) first.
-1. Open a terminal in that folder and run:
+2. Place `potatobot.jar` in a folder where you want to keep your tasks. Building from source? Follow the JAR build instructions below first.
+3. Open a terminal in that folder and run:
 
    ```shell
    java -jar potatobot.jar
    ```
 
-1. PotatoBot opens with a greeting. Type `todo Prepare slides` and press **Enter** or click **Send**.
-1. Try `list` to see your task, then `mark 1` when you finish it. Use `bye` to save and exit.
+4. PotatoBot opens with a greeting. Type `todo Prepare slides` and press **Enter** or click **Send**.
+5. Try `list` to see your task, then `mark 1` when you finish it. Use `bye` to save and exit.
 
 Scroll through the conversation to revisit earlier replies.
+
+### Building the JAR from source
+
+Skip this step if you already have `potatobot.jar`.
+
+1. Download or clone the PotatoBot source code and open a terminal in the project folder (the one containing `build.gradle`).
+2. With Java 25 installed, build the application using the command for your operating system. The first build needs an internet connection to download dependencies.
+
+   **macOS / Linux:**
+
+   ```shell
+   ./gradlew shadowJar
+   ```
+
+   **Windows:**
+
+   ```powershell
+   .\gradlew.bat shadowJar
+   ```
+
+3. Find the generated `potatobot.jar` in `build/libs/`. It includes the application's dependencies. Copy it to your chosen task folder, then continue with the quick-start steps above.
 
 ## Features
 
