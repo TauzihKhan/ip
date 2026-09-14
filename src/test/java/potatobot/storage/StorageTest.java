@@ -69,9 +69,9 @@ public class StorageTest {
     public void load_invalidStoredDates_rejectsFile() throws IOException {
         Path saveFile = temporaryDirectory.resolve("invalid.txt");
         for (String details : new String[] {
-                "report (Deadline, by: invalid)", "meeting (Event, from: invalid to: Sep 02 2026)",
-                "meeting (Event, from: Sep 02 2026 to: invalid)",
-                "meeting (Event, from: Sep 02 2026 to: Sep 01 2026)"
+            "report (Deadline, by: invalid)", "meeting (Event, from: invalid to: Sep 02 2026)",
+            "meeting (Event, from: Sep 02 2026 to: invalid)",
+            "meeting (Event, from: Sep 02 2026 to: Sep 01 2026)"
         }) {
             Files.writeString(saveFile, "[ ] " + details);
             assertThrows(PotatoBotException.class, () -> new Storage(saveFile.toString()).load());

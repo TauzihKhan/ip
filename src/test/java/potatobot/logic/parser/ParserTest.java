@@ -57,9 +57,9 @@ public class ParserTest {
     @Test
     public void parse_missingOrReversedDates_rejectsIncompleteTasks() {
         for (String input : new String[] {
-                "deadline report /by ", "event meeting /from 2026-08-31 /to ",
-                "event meeting /from 2026-08-31 /to invalid",
-                "event meeting /from 2026-09-02 /to 2026-08-31"
+            "deadline report /by ", "event meeting /from 2026-08-31 /to ",
+            "event meeting /from 2026-08-31 /to invalid",
+            "event meeting /from 2026-09-02 /to 2026-08-31"
         }) {
             assertThrows(PotatoBotException.class, () -> parser.parse(input));
         }
