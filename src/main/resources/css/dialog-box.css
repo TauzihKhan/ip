@@ -16,6 +16,12 @@
     -fx-text-fill: #d3c6aa;
 }
 
-#displayPicture {
-    -fx-effect: dropshadow(gaussian, rgba(28, 34, 38, 0.75), 10, 0.35, 2, 3);
+.bot-label.error-label {
+    -fx-background-color: #f3d6d3;
+    -fx-border-color: #c43d3d;
+    -fx-text-fill: #8b2020;
+}
+
+.avatar {
+    -fx-effect: dropshadow(gaussian, rgba(16, 22, 26, 0.65), 9, 0.18, 0, 3);
 }

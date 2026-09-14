@@ -56,8 +56,8 @@ public class PotatoBot {
      * Processes one line of user input without performing console input or output.
      *
      * @param input User command to process.
-     * @return Result containing the response and whether the application should
-     *         exit.
+     * @return Result containing the response, whether it is an error, and whether
+     *         the application should exit.
      */
     public CommandResult respondTo(String input) {
         try {
@@ -79,7 +79,7 @@ public class PotatoBot {
             }
             return result;
         } catch (PotatoBotException exception) {
-            return CommandResult.reply(exception.getMessage());
+            return CommandResult.error(exception.getMessage());
         }
     }
 
@@ -147,7 +147,7 @@ public class PotatoBot {
      */
     private CommandResult undoLastCommand() throws PotatoBotException {
         if (undoHistory.isEmpty()) {
-            return CommandResult.reply(UndoCommand.EMPTY_HISTORY_MESSAGE);
+            return CommandResult.error(UndoCommand.EMPTY_HISTORY_MESSAGE);
         }
 
         UndoHistoryEntry historyEntry = undoHistory.getLast();
