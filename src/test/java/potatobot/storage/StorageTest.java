@@ -26,6 +26,89 @@ public class StorageTest {
     private Path temporaryDirectory;
 
     @Test
+    public void saveAndLoad_allTypesAndStatuses_roundTripsUnicodeAndOrder()
+            throws IOException, PotatoBotException {
+        Storage storage = new Storage(temporaryDirectory.resolve("round-trip.txt").toString(), "shown.txt");
+        TaskList tasks = new TaskList();
+        tasks.add(new Task("买土豆 🥔"), new Todo("read (Todo)"),
+                new Deadline("report (Deadline, by: draft)", "2024-02-29"),
+                new Event("meeting (Event, from: draft)", "2026-12-31", "2027-01-01"));
+        tasks.markDone(0);
+        tasks.markDone(2);
+        tasks.markDone(3);
+        storage.save(tasks);
+        List<Task> restored = storage.load();
+        assertEquals("shown.txt", storage.getDisplayFilePath());
+        assertEquals(tasks.size(), restored.size());
+        for (int i = 0; i < tasks.size(); i++) {
+            assertEquals(tasks.get(i).getClass(), restored.get(i).getClass());
+            assertEquals(tasks.get(i).toString(), restored.get(i).toString());
+            assertEquals(tasks.get(i).getStatusIcon(), restored.get(i).getStatusIcon());
+        }
+    }
+
+    @Test
+    public void save_emptyList_clearsPreviousContents() throws IOException, PotatoBotException {
+        Path saveFile = temporaryDirectory.resolve("empty.txt");
+        Files.writeString(saveFile, "[X] obsolete");
+        Storage storage = new Storage(saveFile.toString());
+        storage.save(new TaskList());
+        assertEquals("", Files.readString(saveFile));
+        assertTrue(storage.load().isEmpty());
+        assertEquals(saveFile.toString(), storage.getDisplayFilePath());
+    }
+
+    @Test
+    public void load_exactCapacity_acceptsAllTasks() throws IOException, PotatoBotException {
+        Path saveFile = temporaryDirectory.resolve("full.txt");
+        Files.writeString(saveFile, String.join("\n", Collections.nCopies(TaskList.MAX_SIZE, "[ ] task")));
+        assertEquals(TaskList.MAX_SIZE, new Storage(saveFile.toString()).load().size());
+    }
+
+    @Test
+    public void load_invalidStoredDates_rejectsFile() throws IOException {
+        Path saveFile = temporaryDirectory.resolve("invalid.txt");
+        for (String details : new String[] {
+                "report (Deadline, by: invalid)", "meeting (Event, from: invalid to: Sep 02 2026)",
+                "meeting (Event, from: Sep 02 2026 to: invalid)",
+                "meeting (Event, from: Sep 02 2026 to: Sep 01 2026)"
+        }) {
+            Files.writeString(saveFile, "[ ] " + details);
+            assertThrows(PotatoBotException.class, () -> new Storage(saveFile.toString()).load());
+        }
+    }
+
+    @Test
+    public void load_markersWithoutClosingParenthesis_preservesPlainTask() throws IOException, PotatoBotException {
+        Path saveFile = temporaryDirectory.resolve("plain.txt");
+        Files.writeString(saveFile, "[ ] text (Deadline, by: draft\n[ ] text (Event, from: draft\n[ ] plain)");
+        List<Task> tasks = new Storage(saveFile.toString()).load();
+        assertEquals(3, tasks.size());
+        assertEquals("text (Deadline, by: draft", tasks.get(0).toString());
+        assertEquals("text (Event, from: draft", tasks.get(1).toString());
+        assertEquals("plain)", tasks.get(2).toString());
+        for (Task task : tasks) {
+            assertEquals(Task.class, task.getClass());
+        }
+    }
+
+    @Test
+    public void load_directoryInsteadOfFile_reportsIoFailure() {
+        assertThrows(IOException.class, () -> new Storage(temporaryDirectory.toString()).load());
+    }
+
+    @Test
+    public void save_invalidFileOrParent_reportsIoFailure() throws IOException {
+        assertThrows(IOException.class,
+                () -> new Storage(temporaryDirectory.toString()).save(new TaskList()));
+        Path parentFile = temporaryDirectory.resolve("parent-file");
+        Files.writeString(parentFile, "preserve me");
+        assertThrows(IOException.class,
+                () -> new Storage(parentFile.resolve("tasks.txt").toString()).save(new TaskList()));
+        assertEquals("preserve me", Files.readString(parentFile));
+    }
+
+    @Test
     public void load_missingFile_emptyListReturned() throws IOException, PotatoBotException {
         Storage storage = new Storage(temporaryDirectory.resolve("missing.txt").toString());
 
